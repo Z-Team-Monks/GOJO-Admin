@@ -12,7 +12,8 @@ export default {
       { name: 'format-detection', content: 'telephone=no' }
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      { rel: "stylesheet", type: "text/css", href:'https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css'}
     ]
   },
 
@@ -21,11 +22,13 @@ export default {
      '~/assets/css/main.css',
      // SCSS file in the project
      '~/assets/scss/styles.scss',
-     '@mdi/font/css/materialdesignicons.min.css'
+     '@mdi/font/css/materialdesignicons.min.css',
+     
   ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
+    { src: "~/plugins/date-picker.js"},
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
