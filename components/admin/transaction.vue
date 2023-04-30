@@ -1,137 +1,203 @@
 <template>
-    <div class="dashboard">
-      <nav class="navbar navbar-light bg-light sticky-top  justify-content-end">
-  <a class="navbar-brand text-right" href="#">
-    Natnael Abay <img src="../../assets/images/user.png" width="30" height="30" alt="">
-  </a>
-</nav>
-<div class="s-layout__sidebar">
-  <a class="s-sidebar__trigger" href="#0">
-     <i class="fa fa-bars"></i>
-  </a>
+  <div class="dashboard">
+    <navbar />
+    <sidebar />
+    <main class="s-layout__content">
+      <div class="row m-5">
+        <div class="col-sm-4" v-for="content in cardContent" :key="content.id" >
+          <card :content="content"/>
+        </div>
 
-  <nav class="s-sidebar__nav mt-5">
-     <ul>
-        <li>
-           <a class="s-sidebar__nav-link" href="#0">
-             <img src="../../assets/images/home.png" width="30" height="30" alt="">
-           </a>
-        </li>
-        <li>
-           <a class="s-sidebar__nav-link" href="#0">
-            <img src="../../assets/images/user.png" width="30" height="30" alt="">
-           </a>
-        </li>
-        <li>
-           <a class="s-sidebar__nav-link" href="#0">
-            <img src="../../assets/images/settings.png" width="30" height="30" alt="">
-           </a>
-        </li>
-     </ul>
-  </nav>
-</div>
-       <main class="s-layout__content">
-        <div class="row m-5">
-            <div class="col-sm-4">
-                <card />
-            </div>
-            <div class="col-sm-4">
-                <card />
-            </div>
-            <div class="col-sm-4">
-                <card />
-            </div>
+        <div class="col-12 mt-5">
+          <div class="row">
+            <div class="col-sm-7"><BarChart :chartData="chartData" /></div>
+            <!-- <div class="col-sm-6"><LineChart :chartData="chartData" /></div> -->
+            <div class="col-sm-5"> <calender /> </div>
+          </div>
+        </div>
+        <div class="col-12 mt-5 pt-5">
+          <h4>Transaction</h4>
+          <tabs class="nav-pills nav-fill" :data="tabsData"></tabs>
+          <div class="tab-content p-3">
+          <div class="tab-pane fade show active" id="all">
+          <table classs="table">
+            <thead>
+              <tr>
+                <th align="left">
+                  <input type="checkbox" v-model="selectAll" />
+                </th>
+                <th v-for="column in columns" :key="column">
+                  <span
+                    class="colss"
+                    
+                  >
+                    {{ column }}
+                </span>
+                </th>
+                <th><i class="mdi mdi-dots-vertical"></i></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="transaction in transaction" :key="transaction.id">
+                <td style="width: 3%">
+                  <input
+                    type="checkbox"
+                    v-model="selected"
+                    :value="transaction.id"
+                    number
+                  />
+                </td>
+                <td>
+                  <img src="https://cdn-icons-png.flaticon.com/512/219/219988.png" class="mr-2" width="40" alt="">
+                  {{ transaction.name }}
+                </td>
+                <td>
+                  <span class="active-stat"><i class="mdi mdi-circle"></i> {{ transaction.homeStatus }}</span>
+                 
+                </td>
+                <td>{{ transaction.location }}</td>
+                <td v-if="transaction.paymentStatus == 'Approved'">
+                  <span class="active-stat">{{ transaction.paymentStatus }}</span>
+                </td>
+                <td v-if="transaction.paymentStatus == 'Not Approved'">
+                  <span class="deactive-stat">{{ transaction.paymentStatus }}</span>
+                </td>
+                <td>
+                 {{ transaction.amount }}
+                </td>
+                <td><i class="mdi mdi-dots-vertical"></i></td>
+              </tr>
+            </tbody>
             
-            <div class="col-12 mt-5">
-                <div class="row">
-        <div class="col-sm-6"><BarChart :chartData="chartData" /></div>
-        <div class="col-sm-6"> <line-chart :chartData="chartData"/></div>
-       </div>
+          </table>
+          
+          <nav aria-label="Page navigation nav-style" class="pagination-wrapper">
+              <ul class="pagination">
+                <li class="page-item">
+                  <a class="page-link" href="#" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                    <span class="sr-only">Previous</span>
+                  </a>
+                </li>
+                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item">
+                  <a class="page-link" href="#" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                    <span class="sr-only">Next</span>
+                  </a>
+                </li>
+              </ul>
+            </nav>
             </div>
-            <div class="col-12 mt-5 pt-5">
-                <h4>Users</h4>
-      <table classs="table">
-        <thead>
-          <tr>
-            <th align="left" >
-              <input type="checkbox" v-model="selectAll">
-            </th>
-            <th v-for="column in columns" :key="column">
-                <a href="#" @click.prevent=sortBy(column) :class="{ active : isActive(column) }">
-                  {{ column | capitalize }}
-                </a>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="user in users" :key="user.id">
-            <td style="width: 3%"><input type="checkbox" v-model="selected" :value="user.id" number></td>
-            <td> <i class="mdi mdi-account-circle-outline mdi-24px"></i> {{ user.name | capitalize }}</td>
-            <td><strong>{{ user.email }}</strong> <br><span class="dept-span">{{ user.email }}</span> </td>
-            <td>{{ user.age }}</td>
-            <td v-if="user.status == 'Active'"><span class="active-stat">{{ user.status }}</span></td>
-            <td v-if="user.status == 'Deactive'"><span class="deactive-stat">{{ user.status }}</span></td>
-          </tr>
-        </tbody>
-        <nav aria-label="Page navigation nav-style">
-  <ul class="pagination">
-    <li class="page-item">
-      <a class="page-link" href="#" aria-label="Previous">
-        <span aria-hidden="true">&laquo;</span>
-        <span class="sr-only">Previous</span>
-      </a>
-    </li>
-    <li class="page-item"><a class="page-link" href="#">1</a></li>
-    <li class="page-item"><a class="page-link" href="#">2</a></li>
-    <li class="page-item"><a class="page-link" href="#">3</a></li>
-    <li class="page-item">
-      <a class="page-link" href="#" aria-label="Next">
-        <span aria-hidden="true">&raquo;</span>
-        <span class="sr-only">Next</span>
-      </a>
-    </li>
-  </ul>
-</nav>
-      </table>
-     
-      
             </div>
         </div>
-        
-       </main>
-       
-    </div>
+      </div>
+    </main>
+  </div>
 </template>
 
 <script>
-import card from '../elements/card.vue'
-import BarChart from '../statistics/BarChart.vue'
-import LineChart from '../statistics/LineChart.vue'
-
-
+import card from "../elements/card.vue";
+import BarChart from "../statistics/BarChart.vue";
+import LineChart from "../statistics/LineChart.vue";
+import tabs from "../elements/tab.vue"
+import Sidebar from '../elements/sidebar.vue';
+import navbar from "../elements/navbar.vue"
+import Calender from '../elements/calender.vue';
 export default {
-  components: { card, BarChart, LineChart},
-    name:'home',
-   
-    data() {
-    return{
-        sortKey: "",
-    reverse: false,
-  
-    search: "",
-    selected: [],
-    columns: ["Name", "Department", "last active date", "status"],
-    users: [ 
-      { "id": "1", "age" : '21-12-2022', "name": "Shad Jast Bahil...", "email": "Software and Information Technology", "status": "Active", },
-      { "id": "2", "age" : '21-12-2022', "name": "Duane Metz Aerz...", "email": "Software and Information Technology", "status": "Deactive", }, 
-      { "id": "3", "age" : '21-12-2022', "name": "Myah Kris Brown...", "email": "Software and Information Technology", "status": "Active", }, 
-      { "id": "4", "age" : '21-12-2022', "name": "Dr. Kamron Wunsch", "email": "Software and Information Technology", "status": "Deactive", },
-      { "id": "5", "age" : '21-12-2022', "name": "David Pella Der....", "email": "Software and Information Technology", "status": "Active", },
-      { "id": "6", "age" : '21-12-2022', "name": "Richard Jacob Yakor...", "email": "Software and Information Technology", "status": "Deactive", }
-    ],
-    chartData: {
+  components: { card, BarChart, LineChart, tabs, Sidebar, navbar, Calender },
+  name: "home",
+
+  data() {
+    return {
+      sortKey: "",
+      reverse: false,
+
+      search: "",
+      selected: [],
+      columns: ["Name", "Home Status","Location", "Payment Status", "Amount"],
+      transaction: [
+        {
+          id: "1",
+          age: "21-12-2022",
+          name: "Mira Herwitz...",
+          homeStatus: "Rented",
+          location: "Bole Bulbula",
+          paymentStatus:"Approved",
+          amount:"2000 ETB"
+        },
+        {
+          id: "1",
+          age: "21-12-2022",
+          name: "Mira Herwitz...",
+          homeStatus: "Rented",
+          location: "Bole Bulbula",
+          paymentStatus:"Approved",
+          amount:"2000 ETB"
+        },
+        {
+          id: "1",
+          age: "21-12-2022",
+          name: "Mira Herwitz...",
+          homeStatus: "Rented",
+          location: "Bole Bulbula",
+          paymentStatus:"Not Approved",
+          amount:"2000 ETB"
+        },
+        {
+          id: "1",
+          age: "21-12-2022",
+          name: "Mira Herwitz...",
+          homeStatus: "Rented",
+          location: "Bole Bulbula",
+          paymentStatus:"Approved",
+          amount:"2000 ETB"
+        },
+        
+      ],
+      cardContent: [
+        {
+          id: "1",
+          title: "Total Cash Flow",
+          icon: "mdi mdi-account-multiple-outline mdi-48px card-i",
+          value: "9.2K ETB",
+          subscript: "+3,840 ETB (26,80%)",
+        },
+        {
+          id: "2",
+          title: "Current Amount",
+          icon: "mdi mdi mdi-eye-outline mdi-48px card-i",
+          value: "58K ETB",
+          subscript: "+210K (16,20%)",
+        },
+        {
+          id: "3",
+          title: "Released",
+          icon: "mdi mdi-chart-bar mdi-48px card-i",
+          value: "12K ETB",
+          subscript: "-2400 ETB (0.74%)",
+        },
+      ],
+      tabsData: [
+        {
+          id: "all",
+          title: "All",
+          active: true,
+        },
+        {
+          id: "approved",
+          title: "Approved",
+        },
+        {
+          id: "rejected",
+          title: "Rejected",
+        },
+      ],
+      chartData: {
         labels: [
-        "2019-06",
+          "2019-06",
           "2019-07",
           "2019-08",
           "2019-09",
@@ -150,19 +216,7 @@ export default {
             label: "Transaction History",
             fill: false,
             data: [
-              150,
-              200,
-              100,
-              50,
-              500,
-              130,
-              700,
-              240,
-              900,
-              560,
-              350,
-              420,
-              100
+              150, 200, 100, 50, 500, 130, 700, 240, 900, 560, 350, 420, 100,
             ],
             backgroundColor: [
               "rgb(255, 99, 132)",
@@ -182,10 +236,9 @@ export default {
           },
         ],
       },
-    }
+    };
   },
   computed: {
-    
     selectAll: {
       get: function () {
         return this.users ? this.selected.length == this.users.length : false;
@@ -200,33 +253,31 @@ export default {
         }
 
         this.selected = selected;
-      }
+      },
     },
-    orderedUsers: function(){
+    orderedUsers: function () {
       return this.users, this.sortKey, this.reverse ? "asc" : "desc";
-    }
+    },
   },
   filters: {
     capitalize: function (value) {
-      if (!value) return ''
-      value = value.toString()
-      return value.charAt(0).toUpperCase() + value.slice(1)
-    }
+      if (!value) return "";
+      value = value.toString();
+      return value.charAt(0).toUpperCase() + value.slice(1);
+    },
   },
   methods: {
-    sortBy: function(sortKey){
-      
-      this.reverse = (this.sortKey == sortKey) ? ! this.reverse : false;
+    sortBy: function (sortKey) {
+      this.reverse = this.sortKey == sortKey ? !this.reverse : false;
 
       this.sortKey = sortKey;
     },
-    isActive: function(column){
+    isActive: function (column) {
       return this.sortKey == column;
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>
-
 </style>

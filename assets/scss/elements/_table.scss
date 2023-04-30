@@ -1,15 +1,18 @@
 table {
     width: 100%;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
   }
+
   
   td {
-    border: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
   }
-  
   th {
-    border: 2px solid #ddd;
+    border-top: 2px solid #ddd;
+    border-bottom: 2px solid #ddd;
     background-color:#f6f6f6;
-    text-transform: uppercase;
+    // text-transform: uppercase;
   }
   
   th, td {
@@ -21,15 +24,14 @@ table {
     diplay: inline;
   }
   
-  a {
+  .colss{
     font-weight: normal;
     color: #1BB55C;;
   }
   
-  .active {
-    font-weight: bold;
-    color: red;
-  }
+  // .active {
+  //   font-weight: bold;
+  // }
   .dept-span{
     font-size: 13px !important;
   }
@@ -53,4 +55,7 @@ table {
     padding: 5px 10px;
     margin-bottom: 10px;
     text-decoration: none; }
-  
+  .pagination-wrapper{
+    margin-top: 10px;
+    float: right;
+  }

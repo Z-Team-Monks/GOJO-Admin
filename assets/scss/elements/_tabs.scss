@@ -1,0 +1,152 @@
+/* Tabs */
+$primary-color: #010933;
+
+.nav-link {
+	cursor: pointer;
+	&:focus {
+		outline: none !important;
+	}
+}
+
+.nav-item, .nav-item:focus, .nav-link{
+	outline: none;
+}
+.nav{
+    border-bottom-right-radius: .3rem;
+	border: .1rem solid #d7d7d7;
+	border-top-width: 0;
+	border-right-width: 0;
+	border-left-width: 0;
+}
+.nav.nav-tabs {
+	border-bottom-right-radius: .3rem;
+	border: .1rem solid #d7d7d7;
+	border-top-width: 0;
+	border-right-width: 0;
+	border-left-width: 0;
+	
+	.nav-link {
+		color: #777;
+		font-weight: 500;
+		font-size: 1.4rem;
+		line-height: 1.5;
+		letter-spacing: -.025em;
+		padding: .85rem 2.2rem;
+		border-top-left-radius: .3rem;
+		border-top-right-radius: .3rem;
+		text-align: center;
+		transition: all .35s ease;
+
+		&:hover,
+		&:focus {
+			color: $primary-color;
+			border-color: transparent;
+		}
+	}
+
+	.nav-item {
+		& + .nav-item {
+			margin-left: .1rem;
+		}
+
+		&.show .nav-link,
+		.nav-link.active {
+			color: $primary-color;
+			border-color: #d7d7d7;
+			border-bottom-color: transparent;
+		}
+	}
+
+	&.nav-tabs-bg {
+		.nav-link {
+			border-color: #ebebeb  #ebebeb #d7d7d7 #ebebeb;
+			background-color: #fafafa;
+		}
+		.nav-item.show .nav-link {
+			color: $primary-color;
+			border-color: #d7d7d7;
+			border-bottom-color: transparent;
+			background-color: #fff;
+		}
+	}
+
+	&.justify-content-center {
+		border-bottom-left-radius: .3rem;
+		border-bottom-right-radius: .3rem;
+	}
+}
+
+.tab-content-border {
+	border: .1rem solid #d7d7d7;
+	border-radius: .3rem;
+	border-top-left-radius: 0;
+	border-top-width: 0;
+
+	.justify-content-center + & {
+		border-top-left-radius: .3rem;
+	}
+}
+
+.tab-pane {
+	// padding: 1.4rem 2.2rem;
+
+	p:last-child {
+		margin-bottom: 0;
+	}
+}
+
+/* Nav Pills - Line Tabs */
+.nav.nav-pills {
+	.nav-link {
+		color: #777;
+		font-weight: 400;
+		line-height: 1.5;
+		letter-spacing: -.01em;
+		padding: .45rem 1rem;
+		border-radius: 0;
+		text-align: center;
+		text-transform: unset;
+		border: none;
+		border-bottom: .1rem solid transparent;
+		background-color: transparent;
+		transition: all .35s ease;
+
+		&:hover,
+		&:focus {
+			color: $primary-color;
+		}
+
+		&:focus {
+			outline: none !important;
+		}
+	}
+
+	.nav-item {
+		& + .nav-item {
+			margin-left: 1rem;
+		}
+
+		&.show .nav-link,
+		.nav-link.active {
+			color: $primary-color;
+			border-color: #d7d7d7;
+			border-bottom-color: $primary-color;
+		}
+	}
+}
+.nav-fill .nav-item {
+
+    flex: none !important;
+   
+}
+.nav-pills {
+	& + .tab-content {
+		.tab-pane {
+			padding: 1.4rem 0;
+
+			p:last-child {
+				margin-bottom: 0;
+			}
+		}
+	}
+}
