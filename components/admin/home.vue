@@ -8,16 +8,17 @@
           <card :content="content" />
         </div>
         <div class="col-12 mt-5">
-          <div class="row">
+          <!-- <div class="row">
             <div class="col-12">
               <h4>Users</h4>
             </div>
-          </div>
+          </div> -->
           <tabs class="nav-pills nav-fill" :data="tabsData"></tabs>
           <div class="tab-content p-3">
           <div class="tab-pane fade show active" id="all">
           <table classs="table">
             <thead>
+              <tr class="table-header"><h5 class="m-3">Users</h5></tr>
               <tr>
                 <th align="left">
                   <input type="checkbox" v-model="selectAll" />
@@ -55,10 +56,10 @@
                 </td>
                 <td>{{ user.age }}</td>
                 <td v-if="user.status == 'Active'">
-                  <span class="active-stat">{{ user.status }}</span>
+                  <div class="active-stat text-center">{{ user.status }}</div>
                 </td>
                 <td v-if="user.status == 'Deactive'">
-                  <span class="deactive-stat">{{ user.status }}</span>
+                  <div class="deactive-stat text-center">{{ user.status }}</div>
                 </td>
               </tr>
             </tbody>

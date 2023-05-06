@@ -34,12 +34,6 @@
   </script>
   
   <style>
-  .chart-card {
-    border-radius: 3%;
-    /* box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.1); */
-    background-color: white;
-    height: 250px;
-    min-height: 330px;
-  }
+ 
   </style>
   

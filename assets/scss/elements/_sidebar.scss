@@ -35,14 +35,15 @@
  
  .s-sidebar__nav {
     position: fixed;
-    top: 0;
-    left: -5em;
+    top: 2rem;
+    left: -2em;
     overflow: hidden;
     transition: all .3s ease-in;
     width: 5em;
-    height: 100%;
-    background: #f3f5f7;
+    height: 37%;
+    background: white;
     color: #1BB55C;
+    border-radius: 1rem;
  }
  
  .s-sidebar__nav:hover,
@@ -135,12 +136,13 @@
     
     .s-sidebar__nav {
        width: 5em;
+       left: 1rem;
     }
     
     .s-sidebar__nav ul {
        top: 1.3em;
     }
  }
- img{
-   margin-left: 20px;
+ .sidebar-img{
+   margin-left: 31%;
  }

@@ -13,8 +13,8 @@
         </div>
       </div>
       <div class="row mt-1">
-        <div class="col-sm-6">{{ content.subscript }}</div>
-        <div class="col-sm-6">
+        <div class="col-sm-8">{{ content.subscript }}</div>
+        <div class="col-sm-4">
           <i class="mdi mdi-arrow-up mdi-24px card-i"></i><i class="mdi mdi-arrow-down mdi-24px card-i"></i>
         </div>
       </div>

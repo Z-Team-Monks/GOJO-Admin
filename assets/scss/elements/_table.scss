@@ -1,7 +1,7 @@
 table {
     width: 100%;
-    border-left: 1px solid #ddd;
-    border-right: 1px solid #ddd;
+    border: 1px solid #ddd;
+    background-color: white;
   }
 
   
@@ -36,15 +36,17 @@ table {
     font-size: 13px !important;
   }
   .active-stat{
-    background-color: #f5f5f5;
+    background-color: #f2f0f9;
     padding: 5px 10px;
     border-radius: 5px;
+    width: 6.5rem;
   }
   .deactive-stat{
     background-color: #FC2929;
     color: white;
     padding: 5px 10px;
     border-radius: 5px;
+    width: 6.5rem;
   }
   .round {
     background: #1BB55C;

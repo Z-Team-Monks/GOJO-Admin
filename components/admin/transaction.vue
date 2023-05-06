@@ -15,13 +15,14 @@
             <div class="col-sm-5"> <calender /> </div>
           </div>
         </div>
-        <div class="col-12 mt-5 pt-5">
-          <h4>Transaction</h4>
+        <div class="col-12 mt-5">
+         
           <tabs class="nav-pills nav-fill" :data="tabsData"></tabs>
           <div class="tab-content p-3">
           <div class="tab-pane fade show active" id="all">
           <table classs="table">
             <thead>
+            
               <tr>
                 <th align="left">
                   <input type="checkbox" v-model="selectAll" />
@@ -57,10 +58,10 @@
                 </td>
                 <td>{{ transaction.location }}</td>
                 <td v-if="transaction.paymentStatus == 'Approved'">
-                  <span class="active-stat">{{ transaction.paymentStatus }}</span>
+                  <div class="active-stat text-center">{{ transaction.paymentStatus }}</div>
                 </td>
-                <td v-if="transaction.paymentStatus == 'Not Approved'">
-                  <span class="deactive-stat">{{ transaction.paymentStatus }}</span>
+                <td v-if="transaction.paymentStatus == 'Rejected'">
+                  <div class="deactive-stat text-center">{{ transaction.paymentStatus }}</div>
                 </td>
                 <td>
                  {{ transaction.amount }}
@@ -143,7 +144,7 @@ export default {
           name: "Mira Herwitz...",
           homeStatus: "Rented",
           location: "Bole Bulbula",
-          paymentStatus:"Not Approved",
+          paymentStatus:"Rejected",
           amount:"2000 ETB"
         },
         {

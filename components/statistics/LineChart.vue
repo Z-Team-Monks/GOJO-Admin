@@ -38,10 +38,10 @@
   
   <style>
   .chart-card {
-    border-radius: 3%;
-    /* box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.1); */
+    border-radius: 4%;
+    padding: .5rem;
     background-color: white;
-    height: 330px;
-    min-height: 330px;
+    border: 2px #1BB55C solid;
+   
   }
   </style>

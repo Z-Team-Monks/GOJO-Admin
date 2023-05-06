@@ -4,7 +4,7 @@
         <a
           class="nav-link"
           :href="getUrl(tab)"
-          :class="{ 'active bg-white': tab.active }"
+          :class="{ 'active': tab.active }"
           @click.prevent="tabClick(tab)"
           >{{ tab.title }}</a
         >

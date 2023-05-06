@@ -10,9 +10,10 @@
             <li>
             <a class="s-sidebar__nav-link" href="#0">
               <img
-                src="../../assets/images/home.png"
+                src="../../assets/images/Frame.svg"
                 width="30"
                 height="30"
+                class="sidebar-img"
                 alt=""
               />
             </a>
@@ -21,9 +22,10 @@
           <li>
             <a class="s-sidebar__nav-link" href="#0">
               <img
-                src="../../assets/images/user.png"
+                src="../../assets/images/Vector.svg"
                 width="30"
                 height="30"
+                class="sidebar-img"
                 alt=""
               />
             </a>
@@ -31,9 +33,10 @@
           <li>
             <a class="s-sidebar__nav-link" href="#0">
               <img
-                src="../../assets/images/settings.png"
+                src="../../assets/images/Vector (1).svg"
                 width="30"
                 height="30"
+                class="sidebar-img"
                 alt=""
               />
             </a>
@@ -45,6 +48,7 @@
                 src="https://static.vecteezy.com/system/resources/previews/017/197/461/large_2x/green-check-mark-icon-on-transparent-background-free-png.png"
                 width="30"
                 height="30"
+                class="sidebar-img"
                 alt=""
               />
             </a>
