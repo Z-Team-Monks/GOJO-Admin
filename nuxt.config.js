@@ -23,12 +23,12 @@ export default {
      // SCSS file in the project
      '~/assets/scss/styles.scss',
      '@mdi/font/css/materialdesignicons.min.css',
-     
+
   ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
-    { src: "~/plugins/date-picker.js"},
+    "~/plugins/date-picker.js"
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -36,7 +36,7 @@ export default {
 
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
   buildModules: [
-    '@nuxtjs/style-resources',
+    '@nuxtjs/style-resources'
   ],
   styleResources: {
     scss: [
@@ -51,5 +51,6 @@ export default {
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
+
   }
 }

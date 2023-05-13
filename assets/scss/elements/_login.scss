@@ -1,7 +1,7 @@
 $main-color: #fa4299;
 $button-color: #fff;
 $border-color: #000;
-$theme:#1BB55C;
+
 
 @import "https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700&display=swap";
 
@@ -37,7 +37,7 @@ body {
   margin: auto;
   padding: 0 1rem;
   z-index: 2;
-  
+
 }
 
 
@@ -52,7 +52,7 @@ body {
   .title-text {
     padding: 2rem;
 	display: flex;
-	
+
 	background-color: white;
 	width: 180%;
 		.title {
@@ -73,7 +73,7 @@ body {
       padding: 1.5rem 30px;
       padding-top: 0;
 	  .check-boxx{
-		
+
 				color: #999999;
 				margin-top: 4%;
 				label{
@@ -162,7 +162,7 @@ body {
 .form-container {
 	background: rgb(255, 255, 255);
   	padding: 0 30px;
-	
+
 	.form-inner {
 		display: flex;
 		width: 200%;
@@ -202,7 +202,7 @@ body {
 .btn {
 	margin: auto;
 	border: 0;
-	background-color: var(--bg2);
+	// background-color: var(--bg2);
 	border-radius: 1.5em;
 	display: block;
 	position: relative;
@@ -253,7 +253,7 @@ body {
 	stroke: hsl(0,0%,100%);
 	stroke-dashoffset: 34;
   }
-  
+
   /* Both states */
   .btn--running,
   .btn--done {
@@ -275,7 +275,7 @@ body {
   .btn--done .btn__progress {
 	visibility: visible;
   }
-  
+
   /* Running state */
   .btn--running .btn__text {
 	background-color: $theme;
@@ -295,7 +295,7 @@ body {
 	stroke-dashoffset: 0;
 	transition: stroke-dashoffset 2s 0.6s linear;
   }
-  
+
   /* Done state */
   .btn--done .btn__progress-track {
 	stroke: $theme;
@@ -337,17 +337,17 @@ body {
       max-width: 80rem;
     }
   }
-  
-  
-  
+
+
+
   @media only screen and (max-width: 992px) {
     .container {
       max-width: 80rem;
     }
   }
-  
-  
-  
+
+
+
   @media only screen and (max-width: 768px) {
     .container {
       max-width: 650px;
@@ -357,7 +357,7 @@ body {
 	}
   }
 
-  
+
   @media only screen and (max-width: 576px) {
     .container {
       max-width: 100%;
