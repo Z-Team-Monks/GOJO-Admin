@@ -25,7 +25,7 @@
           <tour-upload @selectImage="handleImage" />
         </div>
         <div class="col-lg-9 col-sm-12">
-          <tour-canvas :image="selectedImage" />
+          <tour-canvas ref="canvasRef" />
         </div>
       </div>
     </div>
@@ -50,6 +50,9 @@ export default {
   methods: {
     handleImage(image) {
       this.selectedImage = image;
+
+      const canvasRef = this.$refs.canvasRef;
+      canvasRef.updateImage(image.name);
     },
   },
 };
