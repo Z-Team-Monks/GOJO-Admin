@@ -1,6 +1,7 @@
 <template>
   <div>
     <div class="container login-page">
+     <h1 class="gojo-admin"> GOJJO Admin</h1>
       <div class="wrapper">
         <div class="title-text">
           <div class="title login">Login</div>

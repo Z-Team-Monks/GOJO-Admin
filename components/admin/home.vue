@@ -8,83 +8,11 @@
           <card :content="content" />
         </div>
         <div class="col-12 mt-5">
-          <!-- <div class="row">
-            <div class="col-12">
-              <h4>Users</h4>
-            </div>
-          </div> -->
           <tabs class="nav-pills nav-fill" :data="tabsData"></tabs>
           <div class="tab-content p-3">
-          <div class="tab-pane fade show active" id="all">
-          <table classs="table">
-            <thead>
-              <tr class="table-header"><h5 class="m-3">Users</h5></tr>
-              <tr>
-                <th align="left">
-                  <input type="checkbox" v-model="selectAll" />
-                </th>
-                <th v-for="column in columns" :key="column">
-                  <span
-                   class="colss"
-                    
-                    
-                  >
-                    {{ column }}
-                </span>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="user in users" :key="user.id">
-                <td style="width: 3%">
-                  <input
-                    type="checkbox"
-                    v-model="selected"
-                    :value="user.id"
-                    number
-                  />
-                </td>
-                <td>
-                  <img src="https://cdn-icons-png.flaticon.com/512/219/219988.png" class="mr-2" width="40" alt="">
-                  {{ user.name }}
-                </td>
-                <td>
-                  <strong>{{ user.email }}</strong> <br /><span
-                    class="dept-span"
-                    >{{ user.email }}</span
-                  >
-                </td>
-                <td>{{ user.age }}</td>
-                <td v-if="user.status == 'Active'">
-                  <div class="active-stat text-center">{{ user.status }}</div>
-                </td>
-                <td v-if="user.status == 'Deactive'">
-                  <div class="deactive-stat text-center">{{ user.status }}</div>
-                </td>
-              </tr>
-            </tbody>
-            
-          </table>
-          <nav aria-label="Page navigation nav-style" class="pagination-wrapper">
-              <ul class="pagination">
-                <li class="page-item">
-                  <a class="page-link" href="#" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                    <span class="sr-only">Previous</span>
-                  </a>
-                </li>
-                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item">
-                  <a class="page-link" href="#" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                    <span class="sr-only">Next</span>
-                  </a>
-                </li>
-              </ul>
-            </nav>
-          </div>
+            <div class="tab-pane fade show active" id="all">
+              <Table :users="users" :columns="columns" />
+            </div>
           </div>
         </div>
       </div>
@@ -94,20 +22,16 @@
 
 <script>
 import card from "../elements/card.vue";
-import tabs from "../elements/tab.vue"
-import sidebar from "../elements/sidebar.vue"
-import Navbar from '../elements/navbar.vue';
+import tabs from "../elements/tab.vue";
+import sidebar from "../elements/sidebar.vue";
+import Navbar from "../elements/navbar.vue";
+import Table from "../elements/users-table.vue";
 export default {
-  components: { card , tabs, sidebar, Navbar},
+  components: { card, tabs, sidebar, Navbar, Table },
   name: "home",
 
   data() {
     return {
-      sortKey: "",
-      reverse: false,
-
-      search: "",
-      selected: [],
       columns: ["Employee", "Title / Department", "Last Active Date", "Status"],
       users: [
         {
@@ -192,44 +116,6 @@ export default {
         },
       ],
     };
-  },
-  computed: {
-    selectAll: {
-      get: function () {
-        return this.users ? this.selected.length == this.users.length : false;
-      },
-      set: function (value) {
-        var selected = [];
-
-        if (value) {
-          this.users.forEach(function (user) {
-            selected.push(user.id);
-          });
-        }
-
-        this.selected = selected;
-      },
-    },
-    orderedUsers: function () {
-      return this.users, this.sortKey, this.reverse ? "asc" : "desc";
-    },
-  },
-  filters: {
-    capitalize: function (value) {
-      if (!value) return "";
-      value = value.toString();
-      return value.charAt(0).toUpperCase() + value.slice(1);
-    },
-  },
-  methods: {
-    sortBy: function (sortKey) {
-      this.reverse = this.sortKey == sortKey ? !this.reverse : false;
-
-      this.sortKey = sortKey;
-    },
-    isActive: function (column) {
-      return this.sortKey == column;
-    },
   },
 };
 </script>
