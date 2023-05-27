@@ -18,57 +18,68 @@
         hide-footer
         hide-header
       >
-        <div
-          class="d-flex align-items-center w-100 justify-content-between px-4"
-        >
-          <div></div>
-          <div><h5 class="text-white mb-4">Edit Hostpot</h5></div>
+        <div class="p-3 w-100">
           <div
-            class="cursor-pointer bg-light rounded-circle d-flex justify-content-center align-items-center"
-            @click="showModal = false"
-            style="height: 40px; width: 40px"
+            class="d-flex align-items-center w-100 justify-content-between px-4"
           >
-            <i class="mdi mdi-close"></i>
+            <div></div>
+            <div><h5 class="text-white mb-4">Edit Hostpot</h5></div>
+            <div
+              class="cursor-pointer bg-light rounded-circle d-flex justify-content-center align-items-center"
+              @click="showModal = false"
+              style="height: 40px; width: 40px"
+            >
+              <i class="mdi mdi-close"></i>
+            </div>
           </div>
-        </div>
-        <div class="d-flex align-items-center w-25 justify-content-center">
-          <b-button class="mr-1" squared :size="'sm'" variant="light"
-            >Edit</b-button
-          >
-          <b-button class="ml-1" squared :size="'sm'" variant="light"
-            >Delete</b-button
-          >
-        </div>
-        <div class="mb-10">
-          <p class="text-white text-center my-4">Click on the images below</p>
-        </div>
-        <div class="grid-view">
-          <div
-            v-for="node in getImages()"
-            :key="node.id"
-            @click="handleImageSelect(node)"
-            :class="[selectedImageId == node.id ? 'image-item-selected' : '']"
-          >
-            <h5 class="mb-1 ps-1 py-1">Tour</h5>
-            <img
-              class="m-0"
-              :src="node.panorama"
-              alt=""
-              style="height: 150px; aspect-ratio: 1.6"
-            />
-          </div>
-        </div>
-        <div class="w-100 d-flex justify-content-end">
-          <div>
-            <b-button
-              @click="linkHostpot"
-              :size="'sm'"
-              variant="outline-dark"
-              pill
-              >Link</b-button
+          <div class="d-flex align-items-center w-25 justify-content-center">
+            <b-button class="mr-1" squared :size="'sm'" variant="light"
+              >Edit</b-button
+            >
+            <b-button class="ml-1" squared :size="'sm'" variant="light"
+              >Delete</b-button
             >
           </div>
+          <div class="mb-10">
+            <p class="text-white text-center my-4">Click on the images below</p>
+          </div>
+          <div class="grid-view">
+            <div
+              v-for="node in getImages()"
+              :key="node.id"
+              @click="handleImageSelect(node)"
+              :class="[selectedImageId == node.id ? 'image-item-selected' : '']"
+            >
+              <h5 class="mb-1 ps-1 py-1">Tour</h5>
+              <img
+                class="m-0"
+                :src="node.panorama"
+                alt=""
+                style="height: 150px; aspect-ratio: 1.6"
+              />
+            </div>
+          </div>
+          <div class="w-100 d-flex justify-content-end">
+            <div>
+              <b-button
+                @click="linkHostpot"
+                :size="'sm'"
+                variant="outline-dark"
+                pill
+                >Link</b-button
+              >
+            </div>
+          </div>
         </div>
+      </b-modal>
+      <b-modal
+        v-model="showPublish"
+        centered
+        title="Publish Tour"
+        hide-footer
+        hide-header
+      >
+        <publish-tour />
       </b-modal>
     </div>
     <div
@@ -120,9 +131,13 @@
 import { Viewer } from "photo-sphere-viewer";
 import { VirtualTourPlugin } from "photo-sphere-viewer/dist/plugins/virtual-tour";
 import { MarkersPlugin } from "photo-sphere-viewer/dist/plugins/markers";
+import PublishTour from "./PublishTour.vue";
 
 export default {
   name: "TourCanvas",
+  components: {
+    PublishTour,
+  },
   data: () => ({
     viewer: null,
     tourPlugin: null,
@@ -142,6 +157,7 @@ export default {
     prevPosition: {},
     initialView: null,
     previewMode: false,
+    showPublish: true,
   }),
   methods: {
     updateImage(image) {
@@ -409,6 +425,7 @@ export default {
   background-color: transparent;
 }
 .modal-body {
+  padding: 0;
   width: 1200px;
   display: flex;
   justify-content: center;
@@ -416,6 +433,9 @@ export default {
   align-items: center;
   background-color: #ededed53;
   border-radius: 4px;
+}
+.edit-modal {
+  padding: 1rem;
 }
 .grid-view {
   width: 80%;
