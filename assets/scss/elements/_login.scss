@@ -20,7 +20,7 @@ $theme:#1BB55C;
 html {
 	display: grid;
 	width: 100%;
-	height: 100%;
+	height: 80%;
 	margin: center;
 
 	background: #DDEFFA;
@@ -45,16 +45,16 @@ body {
 	width: 30%;
   left: 35%;
   position:absolute;
-  top: 38%;
+  top: 28%;
+  background-color: white;
   border-radius: 15px;
   box-shadow: 0px 15px 20px rgba(0,0,0,0.1);
 	overflow: hidden;
   .title-text {
     padding: 2rem;
 	display: flex;
-
+    justify-content: center;
 	background-color: white;
-	width: 180%;
 		.title {
       user-select: none;
 			width: 50%;
@@ -86,7 +86,7 @@ body {
 			margin-top: 20px;
 			position: relative;
 			input {
-        		color: $button-color;
+        		color: rgb(112, 108, 108);
 				height: 100%;
 				width: 100%;
 				outline: none;
@@ -174,6 +174,37 @@ body {
 }
 
 
+@media only screen and (max-width: 768px) {
+	.wrapper {
+	  width: 95%;
+	  padding: 0 20px; // add padding to sides on smaller screens
+	  left: 2% !important;
+	  align-items: center;
+	  top: 25%;
+	}
+  
+	.title-text .title {
+	  font-size: 25px; // reduce title size on smaller screens
+	}
+  
+	form {
+	  padding: 1rem 20px;
+	}
+  
+	.field {
+	  height: auto; // use auto height for fields on smaller screens
+	  margin-top: 10px; // reduce margin-top for fields on smaller screens
+	}
+  
+	.field input {
+	  height: 40px; // reduce input height on smaller screens
+	  font-size: 16px; // reduce input font size on smaller screens
+	}
+  
+	.field label {
+	  font-size: 14px; // reduce label font size on smaller screens
+	}
+  }
 
 
 .icon-password{
@@ -213,6 +244,26 @@ body {
 	font-size: 1.1rem;
 	font-weight: bold;
   }
+
+  .btn-loading {
+	background-color: lightgray !important;
+  }
+  
+  /* Make sure the mdi-loader icon is spinning */
+  .mdi-spin {
+	animation: mdi-spin 2s infinite linear;
+	color: #000;
+  }
+  
+  @keyframes mdi-spin {
+	0% {
+	  transform: rotate(0deg);
+	}
+	100% {
+	  transform: rotate(360deg);
+	}
+  }
+
   .btn:not(:disabled):active {
 	transform: translateY(0.1em);
   }
@@ -329,7 +380,7 @@ body {
 .gojo-admin{
 	color: white;
 	text-align: center;
-	margin-top: 15%;
+	margin-top: 10%;
 }
 
 
@@ -367,4 +418,21 @@ body {
       max-width: 100%;
     }
   }
+
+  /* Add your loader styles here */
+.loader {
+	/* This is a simple loader. You can customize it or replace it with your own */
+	border: 2px solid #f3f3f3; /* Light grey */
+	border-top: 2px solid #3498db; /* Blue */
+	border-radius: 50%;
+	width: 12px;
+	height: 12px;
+	animation: spin 2s linear infinite;
+  }
+  
+  @keyframes spin {
+	0% { transform: rotate(0deg); }
+	100% { transform: rotate(360deg); }
+  }
+  
 

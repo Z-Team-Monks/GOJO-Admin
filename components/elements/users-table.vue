@@ -1,6 +1,17 @@
 <template>
   <div>
-    <div class="table-header">
+    <table v-if="isLoading">
+      <tr>
+        <td>Loading...</td>
+      </tr>
+    </table>
+    <table v-else-if="!isLoading && paginatedUsers.length === 0">
+      <tr class="text-center p-5">
+        <td class="p-5"> No users found</td>
+      </tr>
+    </table>
+    <div v-else>
+      <div class="table-header">
       <div class="header-row">
         <div>
           <h5 class="m-3">Users</h5>
@@ -15,7 +26,7 @@
               v-model="searchTerm"
               placeholder="Search..."
               class="search-input"
-              @input="filterEmployees"
+              @input="handleSearch"
             />
 
             <i class="mdi mdi-close" @click="disableSearch"></i>
@@ -56,22 +67,27 @@
               width="40"
               alt=""
             />
-            {{ user.name }}
+            <strong>{{ user.first_name }}</strong>
           </td>
           <td>
-            <strong>{{ user.email }}</strong> <br /><span class="dept-span">{{
-              user.email
-            }}</span>
+            {{
+              user.last_name 
+            }}
           </td>
-          <td>{{ user.age }}</td>
-          <td v-if="user.status == 'Active'">
+          <td>
+            {{
+              user.phone
+            }}
+          </td>
+          <td>{{ user.role }}</td>
+          <td v-if="user.is_active == true">
             <div class="active-stat text-center">
-              {{ user.status }}
+              Active
             </div>
           </td>
-          <td v-if="user.status == 'Deactive'">
+          <td v-if="user.is_active == false">
             <div class="deactive-stat text-center">
-              {{ user.status }}
+             Disabled
             </div>
           </td>
         </tr>
@@ -121,6 +137,7 @@
       </select>
       <span class="pl-2 pr-2">{{ pageDisplay }}</span>
     </div>
+    </div>
   </div>
 </template>
   
@@ -128,7 +145,8 @@
 export default {
   props: {
     users: {
-      Type: Object,
+      Type: Array,
+      default: () => [],
     },
     columns: {
       Type: Object,
@@ -146,21 +164,43 @@ export default {
     };
   },
   computed: {
+    isLoading() {
+      // Return true if the users data is still loading
+      // Replace this with the actual loading state from your store
+      return this.$store.state.loading;
+    },
     pageDisplay() {
-      const start = (this.currentPage - 1) * this.rowsPerPage + 1;
+      if (!this.users && this.users == undefined) {
+        return 0; // Return 0 if users is null or undefined
+      }
+      const start = ((this.currentPage - 1) * this.rowsPerPage + 1);
       const end = Math.min(
         this.currentPage * this.rowsPerPage,
-        this.users.length
+        this.users.count
       );
-      return `${start}-${end} of ${this.users.length}`;
+      return `${start}-${end} of ${this.users.count}`;
     },
     paginatedUsers() {
-      const start = (this.currentPage - 1) * this.rowsPerPage;
+      if (!this.users && this.users == undefined) {
+        return []; // Return an empty array if users is null or undefined
+      }
+    
+        const start = (this.currentPage - 1) * this.rowsPerPage;
       const end = start + this.rowsPerPage;
-      return this.users.slice(start, end);
+      if(this.users.results != undefined){
+        return this.users.results.slice(start, end);
+      }
+      else{
+        return []
+      }
+      
+  
     },
     totalPages() {
-      return Math.ceil(this.users.length / this.rowsPerPage);
+      if (!this.users && this.users == undefined) {
+        return 0; // Return 0 if users is null or undefined
+      }
+      return Math.ceil(this.users.count / this.rowsPerPage);
     },
     selectAll: {
       get: function () {
@@ -191,11 +231,15 @@ export default {
   },
   methods: {
     filterEmployees() {
-      this.filteredEmployees = this.users.filter((user) => {
-        return user.name.toLowerCase().includes(this.searchTerm.toLowerCase());
-      });
+      this.filteredEmployees = this.users.results.filter((user) => {
+    const fullName = `${user.first_name} ${user.last_name}`;
+    const searchName = this.searchTerm.toLowerCase().trim();
+    return fullName.toLowerCase().includes(searchName);
+  });
     },
-
+    handleSearch() {
+    this.filterEmployees();
+  },
     enableSearch() {
       this.searchMode = true;
     },

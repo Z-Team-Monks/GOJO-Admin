@@ -19,6 +19,8 @@
           <tabs class="nav-pills nav-fill" :data="tabsData"></tabs>
           <div class="tab-content p-3">
             <div class="tab-pane fade show active" id="all">
+              <div v-if="loading">Loading...</div>
+      <div v-else-if="transactions.length === 0">No transaction records</div>
               <Table :transaction="transaction" :columns="columns" />
             </div>
           </div>
@@ -37,6 +39,8 @@ import Sidebar from "../elements/sidebar.vue";
 import navbar from "../elements/navbar.vue";
 import Calender from "../elements/calender.vue";
 import Table from "../elements/transaction-table.vue";
+import { mapActions, mapGetters } from 'vuex';
+
 export default {
   components: {
     card,
@@ -53,44 +57,44 @@ export default {
   data() {
     return {
       columns: ["Name", "Home Status", "Location", "Payment Status", "Amount"],
-      transaction: [
-        {
-          id: "1",
-          age: "21-12-2022",
-          name: "Mira Herwitz...",
-          homeStatus: "Rented",
-          location: "Bole Bulbula",
-          paymentStatus: "Approved",
-          amount: "2000 ETB",
-        },
-        {
-          id: "1",
-          age: "21-12-2022",
-          name: "Mira Herwitz...",
-          homeStatus: "Rented",
-          location: "Bole Bulbula",
-          paymentStatus: "Approved",
-          amount: "2000 ETB",
-        },
-        {
-          id: "1",
-          age: "21-12-2022",
-          name: "Mira Herwitz...",
-          homeStatus: "Rented",
-          location: "Bole Bulbula",
-          paymentStatus: "Rejected",
-          amount: "2000 ETB",
-        },
-        {
-          id: "1",
-          age: "21-12-2022",
-          name: "Mira Herwitz...",
-          homeStatus: "Rented",
-          location: "Bole Bulbula",
-          paymentStatus: "Approved",
-          amount: "2000 ETB",
-        },
-      ],
+      // transaction: [
+      //   {
+      //     id: "1",
+      //     age: "21-12-2022",
+      //     name: "Mira Herwitz...",
+      //     homeStatus: "Rented",
+      //     location: "Bole Bulbula",
+      //     paymentStatus: "Approved",
+      //     amount: "2000 ETB",
+      //   },
+      //   {
+      //     id: "1",
+      //     age: "21-12-2022",
+      //     name: "Mira Herwitz...",
+      //     homeStatus: "Rented",
+      //     location: "Bole Bulbula",
+      //     paymentStatus: "Approved",
+      //     amount: "2000 ETB",
+      //   },
+      //   {
+      //     id: "1",
+      //     age: "21-12-2022",
+      //     name: "Mira Herwitz...",
+      //     homeStatus: "Rented",
+      //     location: "Bole Bulbula",
+      //     paymentStatus: "Rejected",
+      //     amount: "2000 ETB",
+      //   },
+      //   {
+      //     id: "1",
+      //     age: "21-12-2022",
+      //     name: "Mira Herwitz...",
+      //     homeStatus: "Rented",
+      //     location: "Bole Bulbula",
+      //     paymentStatus: "Approved",
+      //     amount: "2000 ETB",
+      //   },
+      // ],
       cardContent: [
         {
           id: "1",
@@ -171,6 +175,18 @@ export default {
         ],
       },
     };
+  },
+  computed: {
+    // Map the 'transactions' getter from the 'transaction' Vuex module
+    ...mapGetters('transaction', ['transactions','loading']),
+  },
+  methods: {
+    // Map the 'getTransactions' action from the 'transaction' Vuex module
+    ...mapActions('transaction', ['getTransactions']),
+  },
+  created() {
+    // Fetch transactions when the component is created
+    this.getTransactions();
   },
 };
 </script>
