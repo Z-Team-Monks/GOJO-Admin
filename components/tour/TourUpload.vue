@@ -14,7 +14,11 @@
       </button>
     </div>
     <div class="scrollable-div">
-      <draggable v-model="images" ghost-class="ghost">
+      <draggable
+        @change="onUnpublishedChange"
+        v-model="images"
+        ghost-class="ghost"
+      >
         <transition-group>
           <div
             v-for="image in images"
@@ -107,6 +111,9 @@ export default {
     },
     updateSelected(imageId) {
       this.selectedImage = this.images.find((img) => img.id == imageId);
+    },
+    onUnpublishedChange(e) {
+      console.log(e);
     },
   },
 };
