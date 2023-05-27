@@ -26,6 +26,7 @@
             ref="uploadRef"
             @selectImage="handleImage"
             @onUpload="onUpload"
+            @onImageDeleted="handleImageDelete"
           />
         </div>
         <div class="col-lg-9 col-sm-12">
@@ -70,6 +71,10 @@ export default {
     handleImageChange(imageId) {
       const uploadRef = this.$refs.uploadRef;
       uploadRef.updateSelected(imageId);
+    },
+    handleImageDelete(imageId) {
+      const canvasRef = this.$refs.canvasRef;
+      canvasRef.nodeRemoved(imageId);
     },
   },
 };

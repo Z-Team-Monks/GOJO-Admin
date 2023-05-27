@@ -166,7 +166,7 @@ export default {
       };
       return node;
     },
-    createMarker(pos, toNodeId, image = null) {
+    createMarker(pos, toNodeId = null, image = null) {
       const randomDecimal = Math.random();
       const randomNumber = (randomDecimal * (10 ^ (8 - 10) ^ (5 + 1)) + 10) ^ 5;
       const marker = {
@@ -177,7 +177,8 @@ export default {
         height: 48,
         latitude: pos.latitude,
         longitude: pos.longitude,
-        anchor: "bottom center",
+        anchor: "center",
+        linksTo: toNodeId,
       };
 
       return marker;
@@ -188,7 +189,7 @@ export default {
       for (let index = 0; index < this.hotspotNodes.length - 1; index++) {
         const currentNode = this.hotspotNodes[index];
         const nextNode = this.hotspotNodes[index + 1];
-        const marker = this.createMarker(this.viewPostion);
+        const marker = this.createMarker(this.viewPostion, nextNode.id);
         currentNode.links = [
           {
             nodeId: nextNode.id,
@@ -204,7 +205,9 @@ export default {
               ...this.viewPostion,
             },
           ];
-          nextNode.markers = [this.createMarker(this.viewPostion)];
+          nextNode.markers = [
+            this.createMarker(this.viewPostion, this.hotspotNodes[0].id),
+          ];
         }
       }
 
@@ -338,6 +341,19 @@ export default {
     },
     viewMode() {
       this.viewer.enterFullscreen();
+    },
+    nodeRemoved(nodeId) {
+      this.hotspotNodes.forEach((node) => {
+        if (node.id != nodeId) {
+          node.links = node.links.filter((link) => link.nodeId != nodeId);
+          node.markers = node.markers.filter(
+            (marker) => marker.linksTo != nodeId
+          );
+        }
+      });
+      this.hotspotNodes = this.hotspotNodes.filter((node) => node.id != nodeId);
+      this.viewer.setPanorama(this.hotspotNodes[0].panorama);
+      this.tourPlugin.setNodes(this.hotspotNodes);
     },
   },
   mounted() {
