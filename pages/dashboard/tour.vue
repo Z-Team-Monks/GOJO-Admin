@@ -22,10 +22,20 @@
       <div class="row">
         <div class="col-lg-3 col-sm-12">
           <tour-property />
-          <tour-upload @selectImage="handleImage" />
+          <tour-upload
+            ref="uploadRef"
+            @selectImage="handleImage"
+            @onUpload="onUpload"
+          />
         </div>
         <div class="col-lg-9 col-sm-12">
-          <tour-canvas ref="canvasRef" />
+          <div class="text-center">
+            <h2 v-if="!selectedImage" class="mt-10">Pick Image to Start</h2>
+          </div>
+          <tour-canvas
+            ref="canvasRef"
+            @updateSelectedImage="handleImageChange"
+          />
         </div>
       </div>
     </div>
@@ -45,14 +55,21 @@ export default {
   },
   name: "Tour",
   data: () => ({
-    selectedImage: null,
+    selectedImage: false,
   }),
   methods: {
     handleImage(image) {
-      this.selectedImage = image;
-
       const canvasRef = this.$refs.canvasRef;
-      canvasRef.updateImage(image.name);
+      canvasRef.updateImage(image);
+    },
+    onUpload(images) {
+      const canvasRef = this.$refs.canvasRef;
+      canvasRef.addImages(images);
+      this.selectedImage = true;
+    },
+    handleImageChange(imageId) {
+      const uploadRef = this.$refs.uploadRef;
+      uploadRef.updateSelected(imageId);
     },
   },
 };

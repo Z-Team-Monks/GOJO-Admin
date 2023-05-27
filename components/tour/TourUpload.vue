@@ -22,7 +22,12 @@
             class="card mb-3 text-dark"
             @click="handleImageSelect(image)"
           >
-            <div class="p-2 d-flex justify-content-between">
+            <div
+              :class="[
+                'p-2 d-flex justify-content-between',
+                isSelectedImage(image) ? 'bg-info text-white' : '',
+              ]"
+            >
               <div class="d-flex w-75">
                 <i class="mdi mdi-menu mr-2"></i>
                 <h5 class="card-title text-truncate">{{ image.name }}</h5>
@@ -59,6 +64,7 @@ export default {
   },
   data: () => ({
     images: [],
+    selectedImage: null,
   }),
   methods: {
     openFileInput() {
@@ -67,21 +73,39 @@ export default {
     deleteImage(name) {
       this.images = this.images.filter((el) => el.name != name);
     },
-    handleFileChange(event) {
+    async handleFileChange(event) {
       const images = event.target.files;
-      for (let i = 0; i < images.length; i++) {
-        const file = images[i];
-        const reader = new FileReader();
-        const vm = this;
-        reader.onload = function (event) {
-          vm.images.unshift({ name: file.name, data: event.target.result });
-        };
+      const vm = this;
 
-        reader.readAsDataURL(file);
-      }
+      await Promise.all(
+        Array.from(images).map(async (image) => {
+          const file = image;
+          const reader = new FileReader();
+          const result = await new Promise((resolve) => {
+            reader.onload = (event) => resolve(event.target.result);
+            reader.readAsDataURL(file);
+          });
+
+          vm.images.unshift({
+            id: Date.now(),
+            name: file.name,
+            data: result,
+          });
+          return result;
+        })
+      );
+      this.selectedImage = this.images[0];
+      vm.$emit("onUpload", this.images);
     },
     handleImageSelect(image) {
+      this.selectedImage = image;
       this.$emit("selectImage", image);
+    },
+    isSelectedImage(image) {
+      return this.selectedImage && image.id == this.selectedImage.id;
+    },
+    updateSelected(imageId) {
+      this.selectedImage = this.images.find((img) => img.id == imageId);
     },
   },
 };
