@@ -85,10 +85,16 @@
         >
           Link Hostpot
         </button>
-        <button class="btn btn-light rounded rounded-3 loose-button mr-5">
+        <button
+          @click="setInitialView"
+          class="btn btn-light rounded rounded-3 loose-button mr-5"
+        >
           Set initial View
         </button>
-        <button class="btn btn-light rounded loose-button rounded-3">
+        <button
+          @click="viewMode"
+          class="btn btn-light rounded loose-button rounded-3"
+        >
           Preview
         </button>
       </div>
@@ -134,6 +140,8 @@ export default {
     selectedImageId: null,
     isPositionSelect: false,
     prevPosition: {},
+    initialView: null,
+    previewMode: false,
   }),
   methods: {
     updateImage(image) {
@@ -142,6 +150,7 @@ export default {
       this.tourPlugin.setCurrentNode(currentNode.id);
     },
     handlePositionSelected(_, data) {
+      if (this.previewMode) return;
       if (this.isLinkHotspotOn || this.isPositionSelect) {
         const { longitude, latitude } = data;
         this.viewPostion = { longitude, latitude };
@@ -201,7 +210,13 @@ export default {
 
       this.tourPlugin.setNodes(this.hotspotNodes, this.hotspotNodes[0].id);
       this.images = images;
-      this.currentView = images[0];
+      if (this.initialView) {
+        this.tourPlugin.setCurrentNode(this.initialView.id);
+        this.currentView = this.initialView;
+      } else {
+        this.currentView = images[0];
+        this.initialView = this.currentView;
+      }
     },
     handleImageSelect(node) {
       this.selectedImageId = this.selectedImageId ? null : node.id;
@@ -256,6 +271,7 @@ export default {
       // });
     },
     handleMarkerClick({ element: container, id }) {
+      if (this.previewMode) return;
       const exits = container.classList.contains("added-marker");
       if (exits) {
         const spanElement = container.querySelectorAll("div span");
@@ -303,7 +319,7 @@ export default {
       this.isPositionSelect = true;
       this.showModal = true;
     },
-    handleMarkerDelete(id) {
+    async handleMarkerDelete(id) {
       const currentNode = this.hotspotNodes.find(
         (node) => node.id == this.currentView.id
       );
@@ -313,11 +329,15 @@ export default {
           link.longitude == this.prevPosition.longitude
       );
       currentNode.links.splice(nIdx, 1);
+      this.markerPlugin.removeMarker(id);
       const mIdx = currentNode.markers.findIndex((marker) => marker.id == id);
       currentNode.markers.splice(mIdx, 1);
-
-      this.tourPlugin.setCurrentNode(currentNode.id);
-      this.viewer.refreshUi("rebuilding");
+    },
+    setInitialView() {
+      this.initialView = this.currentView;
+    },
+    viewMode() {
+      this.viewer.enterFullscreen();
     },
   },
   mounted() {
@@ -338,6 +358,9 @@ export default {
     });
     this.markerPlugin.on("select-marker", ({ args }) => {
       this.handleMarkerClick({ element: args[0].$el, id: args[0].id });
+    });
+    this.viewer.on("fullscreen-updated", ({ args }) => {
+      this.previewMode = args[0];
     });
   },
   beforeDestroy() {
