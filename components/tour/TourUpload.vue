@@ -36,7 +36,7 @@
                 <i
                   class="mdi mdi-delete mdi-36px"
                   style="color: rgb(169, 24, 24)"
-                  @click="deleteImage(image.name)"
+                  @click="deleteImage(image)"
                 ></i>
                 <i class="mdi mdi-pencil mdi-36px ml-4"></i>
               </div>
@@ -70,8 +70,9 @@ export default {
     openFileInput() {
       this.$refs.fileInput.click();
     },
-    deleteImage(name) {
-      this.images = this.images.filter((el) => el.name != name);
+    deleteImage(image) {
+      this.images = this.images.filter((el) => el.name != image.name);
+      this.$emit("onImageDeleted", image.id);
     },
     async handleFileChange(event) {
       const images = event.target.files;
