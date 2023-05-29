@@ -60,6 +60,7 @@
 
 <script>
 import draggable from "vuedraggable";
+import { v4 as uuidv4 } from "uuid";
 
 export default {
   name: "TourUpload",
@@ -92,7 +93,7 @@ export default {
           });
 
           vm.images.unshift({
-            id: Date.now(),
+            id: uuidv4(),
             name: file.name,
             data: result,
           });

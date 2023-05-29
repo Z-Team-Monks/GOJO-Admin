@@ -132,6 +132,7 @@ import { Viewer } from "photo-sphere-viewer";
 import { VirtualTourPlugin } from "photo-sphere-viewer/dist/plugins/virtual-tour";
 import { MarkersPlugin } from "photo-sphere-viewer/dist/plugins/markers";
 import PublishTour from "./PublishTour.vue";
+import { v4 as uuidv4 } from "uuid";
 
 export default {
   name: "TourCanvas",
@@ -157,7 +158,7 @@ export default {
     prevPosition: {},
     initialView: null,
     previewMode: false,
-    showPublish: true,
+    showPublish: false,
   }),
   methods: {
     updateImage(image) {
@@ -183,10 +184,8 @@ export default {
       return node;
     },
     createMarker(pos, toNodeId = null, image = null) {
-      const randomDecimal = Math.random();
-      const randomNumber = (randomDecimal * (10 ^ (8 - 10) ^ (5 + 1)) + 10) ^ 5;
       const marker = {
-        id: Math.floor(randomNumber),
+        id: uuidv4(),
         image: image ?? require("~/assets/images/svg/arrow-up.256x256.png"),
         tooltip: "Move to the next scene",
         width: 48,
@@ -260,7 +259,6 @@ export default {
         currentNode.markers.push(currentNodeMarker);
       }
       this.tourPlugin.setCurrentNode(currentNode.id);
-      this.viewer.refreshUi("rebuilding");
       this.showModal = false;
       this.isPositionSelect = false;
     },
@@ -268,6 +266,7 @@ export default {
       return this.hotspotNodes.filter((node) => node.id != this.currentView.id);
     },
     handlePublish() {
+      // TODO: check if all nodes are connected before publish!!
       // const formData = FormData();
       // formData.append(`viewPosition`, this.viewPostion);
       // const d = [
