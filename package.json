@@ -20,6 +20,7 @@
     "moment": "^2.29.4",
     "nuxt": "^2.15.8",
     "photo-sphere-viewer": "^4.8.1",
+    "uuid": "^9.0.0",
     "vue": "^2.7.10",
     "vue-chartjs": "^3.5.1",
     "vue-datepicker-ui": "^2.3.0",
