@@ -1,3 +1,5 @@
+import axios from "axios";
+
 export const state = () => ({
   tourProperties: [
     {
@@ -9,6 +11,9 @@ export const state = () => ({
       value: "name",
     },
   ],
+  uploadProgress: 0,
+  tourPublished: false,
+  publishedURL: '',
   defaultViewPostion: {
     latitude: 0.2,
     longitude: 0.5,
@@ -21,7 +26,6 @@ export const state = () => ({
   previewMode: false,
   tourLoading: false,
 });
-
 
 export const mutations = {
   DELETE_IMAGE(state, nodeId) {
@@ -80,31 +84,33 @@ export const mutations = {
       state.initialView = state.currentView;
     }
   },
-  ADD_MARKERS(state, {marker, toId = state.currentView}) {
+  ADD_MARKERS(state, { marker, toId = state.currentView }) {
     const currentNode = state.hotspotNodes.find((node) => node.id == toId);
 
-    const isDuplicate = currentNode.links.find(lk => lk.nodeId == marker.linksTo)
-    if(!isDuplicate){
+    const isDuplicate = currentNode.links.find(
+      (lk) => lk.nodeId == marker.linksTo
+    );
+    if (!isDuplicate) {
       currentNode.markers.push(marker);
     }
   },
-  ADD_LINKS(state, {link, toId = state.currentView}) {
+  ADD_LINKS(state, { link, toId = state.currentView }) {
     const currentNode = state.hotspotNodes.find((node) => node.id == toId);
-    const isDuplicate = currentNode.links.find(lk => lk.nodeId == link.nodeId)
-    if(!isDuplicate){
+    const isDuplicate = currentNode.links.find(
+      (lk) => lk.nodeId == link.nodeId
+    );
+    if (!isDuplicate) {
       currentNode.links.push(link);
     }
   },
-  RE_LINK(state,{ nodeId, toNodeId, link}) {
-    const currentView = state.hotspotNodes.find(
-      (node) => node.id == nodeId
-    );
+  RE_LINK(state, { nodeId, toNodeId, link }) {
+    const currentView = state.hotspotNodes.find((node) => node.id == nodeId);
     const existingLink = currentView.links.find(
       (link) => link.nodeId == toNodeId
     );
-    if(existingLink){
+    if (existingLink) {
       existingLink.nodeId = link.nodeId;
-    }else{
+    } else {
       currentView.links.push(link);
     }
   },
@@ -112,9 +118,7 @@ export const mutations = {
     const currentView = state.hotspotNodes.find(
       (node) => node.id == state.currentView
     );
-    const marker = currentView.markers.find(
-      (marker) => marker.id == markerId
-    );
+    const marker = currentView.markers.find((marker) => marker.id == markerId);
     const nodeLink = currentView.links.find(
       (link) => link.nodeId == marker.linksTo
     );
@@ -133,6 +137,15 @@ export const mutations = {
   SET_LOADING(state, status) {
     state.tourLoading = status;
   },
+  UPDATE_PROGRESS(state, progress) {
+    state.uploadProgress = progress;
+  },
+  UPDATE_PUBLISH_STATUS(state, status) {
+    state.tourPublished = status;
+  },
+  UPDATE_PUBLISH_URL(state, url){
+    state.publishedURL = url
+  }
 };
 
 export const actions = {
@@ -179,7 +192,7 @@ export const actions = {
     commit("SET_LOADING", true);
     try {
       const res = await fetch(
-        `http://192.168.239.207:8000/api/v1/properties/${id}/virtual_tour/`
+        `http://192.168.50.207:8000/api/v1/properties/${id}/virtual_tour/`
       );
       const data = await res.json();
 
@@ -192,28 +205,38 @@ export const actions = {
       }
     } catch (error) {
       console.error("An error occurred:", error.message);
-      // Handle error...
     } finally {
       commit("SET_LOADING", false);
     }
   },
-  async postTour({ commit }, { _data, id }) {
+  async postTour({ commit }, { data, id }) {
     commit("SET_LOADING", true);
     try {
-      const res = await fetch(
-        `http://192.168.239.207:8000/api/v1/properties/${id}/virtual_tour/`,
-        { method: "POST", body: _data }
+      const URL = `http://192.168.50.207:8000/api/v1/properties/${id}/virtual_tour/`
+      const P_URL = `http://localhost:3000/tour/view/${id}`
+      const resp = await axios.post(
+        URL,
+        data,
+        {
+          timeout: 100000,
+          onUploadProgress: (progressEvent) => {
+            const percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+            commit('UPDATE_PROGRESS', percentCompleted)
+          }
+        }
       );
-      const data = await res.json();
-      // Check if the response status is OK
-      if (res.ok) {
-        console.log(data);
-      } else {
-        throw new Error(data.message || "Failed to get tour data");
-      }
+      const res = resp.data;
+      commit("UPDATE_PUBLISH_STATUS", true)
+      commit('UPDATE_PUBLISH_URL', P_URL)
+      console.log(res)
     } catch (error) {
+      commit("UPDATE_PUBLISH_STATUS", false)
+      commit('UPDATE_PUBLISH_URL', '')
       console.error("An error occurred:", error.message);
-      // Handle error...
+      throw new Error("Unknown Error while publishing");
+
     } finally {
       commit("SET_LOADING", false);
     }
@@ -229,4 +252,7 @@ export const getters = {
   viewPostion: (state) => state.viewPostion,
   initialView: (state) => state.initialView,
   tourLoading: (state) => state.tourLoading,
+  uploadProgress: (state) => state.uploadProgress,
+  tourPublished: (state) => state.tourPublished,
+  publishedURL: (state) => state.publishedURL
 };

@@ -8,7 +8,7 @@
           <li class="nav-item">
             <a class="nav-link" href="#">
               <img
-                src="../../assets/images/image 38.png"
+                src="../../../assets/images/image 38.png"
                 alt="Avatar"
                 class="rounded-circle"
                 style="width: 40px; height: 40px; object-fit: cover"
@@ -35,7 +35,7 @@
               Pick Image to Start
             </h2>
           </div>
-          <tour-canvas ref="canvasRef" />
+          <tour-canvas ref="canvasRef" :propertyId="propertyId" />
         </div>
       </div>
     </div>
@@ -43,10 +43,10 @@
 </template>
 
 <script>
-import TourCanvas from "../../components/tour/TourCanvas.vue";
-import TourProperty from "../../components/tour/TourProperty.vue";
-import TourUpload from "../../components/tour/TourUpload.vue";
-import { mapState, mapGetters, mapActions } from "vuex";
+import TourCanvas from "../../../components/tour/TourCanvas.vue";
+import TourProperty from "../../../components/tour/TourProperty.vue";
+import TourUpload from "../../../components/tour/TourUpload.vue";
+import { mapGetters } from "vuex";
 
 export default {
   components: {
@@ -57,6 +57,7 @@ export default {
   name: "Tour",
   data: () => ({
     selectedImage: false,
+    propertyId: "",
   }),
   computed: {
     ...mapGetters("tour", ["hotspotNodes"]),
@@ -79,6 +80,10 @@ export default {
       const canvasRef = this.$refs.canvasRef;
       canvasRef.removeNode(imageId);
     },
+  },
+  mounted() {
+    this.propertyId = this.$route.params.id;
+    console.log(this.propertyId);
   },
 };
 </script>

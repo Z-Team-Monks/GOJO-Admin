@@ -22,7 +22,7 @@
         <transition-group>
           <div
             v-for="image in all_images"
-            :key="image.name"
+            :key="image.id"
             class="card mb-3 text-dark"
             @click="handleImageSelect(image)"
           >
