@@ -10,6 +10,15 @@
         insideCanvas && isLinkHotspotOn ? 'crosshair' : 'default',
       ]"
     >
+      <div style="position: absolute; top: 2%; z-index: 4">
+        <b-alert v-model="showErrorAlert" variant="danger" fade dismissible>
+          {{ alertMessage }}
+        </b-alert>
+        <b-alert v-model="showSuccessAlert" variant="success" dismissible fade>
+          {{ alertMessage }}
+        </b-alert>
+      </div>
+
       <b-modal
         v-model="showModal"
         id="modal-center"
@@ -22,7 +31,18 @@
           <div
             class="d-flex align-items-center w-100 justify-content-between px-4"
           >
-            <div></div>
+            <div>
+              <b-form-checkbox
+                id="checkbox-1"
+                v-model="hasTwoWayLink"
+                name="checkbox-1"
+                value="yes"
+                unchecked-value="no"
+                class="text-white"
+              >
+                Two Way Link
+              </b-form-checkbox>
+            </div>
             <div><h5 class="text-white mb-4">Edit Hostpot</h5></div>
             <div
               class="cursor-pointer bg-light rounded-circle d-flex justify-content-center align-items-center"
@@ -32,28 +52,20 @@
               <i class="mdi mdi-close"></i>
             </div>
           </div>
-          <div class="d-flex align-items-center w-25 justify-content-center">
-            <b-button class="mr-1" squared :size="'sm'" variant="light"
-              >Edit</b-button
-            >
-            <b-button class="ml-1" squared :size="'sm'" variant="light"
-              >Delete</b-button
-            >
-          </div>
           <div class="mb-10">
             <p class="text-white text-center my-4">Click on the images below</p>
           </div>
           <div class="grid-view">
             <div
-              v-for="node in getImages()"
-              :key="node.id"
-              @click="handleImageSelect(node)"
-              :class="[selectedImageId == node.id ? 'image-item-selected' : '']"
+              v-for="image in choiceImages"
+              :key="image.id"
+              @click="choosenImageId = image.id"
+              :class="[choosenImageId == image.id ? 'image-item-selected' : '']"
             >
               <h5 class="mb-1 ps-1 py-1">Tour</h5>
               <img
                 class="m-0"
-                :src="node.panorama"
+                :src="image.panorama"
                 alt=""
                 style="height: 150px; aspect-ratio: 1.6"
               />
@@ -133,6 +145,7 @@ import { VirtualTourPlugin } from "photo-sphere-viewer/dist/plugins/virtual-tour
 import { MarkersPlugin } from "photo-sphere-viewer/dist/plugins/markers";
 import PublishTour from "./PublishTour.vue";
 import { v4 as uuidv4 } from "uuid";
+import { mapState, mapActions } from "vuex";
 
 export default {
   name: "TourCanvas",
@@ -140,37 +153,69 @@ export default {
     PublishTour,
   },
   data: () => ({
+    isLinkHotspotOn: false,
+    insideCanvas: false,
+    showModal: false,
+    isPositionSelect: false,
+    showPublish: false,
+    choosenImageId: null,
+    selectedMarkerId: {},
     viewer: null,
     tourPlugin: null,
     markerPlugin: null,
-    isLinkHotspotOn: false,
-    insideCanvas: false,
-    viewPostion: {
-      latitude: 0.2,
-      longitude: 0.5,
-    },
-    currentView: undefined,
-    hotspotNodes: [],
-    images: [],
-    showModal: false,
-    selectedImageId: null,
-    isPositionSelect: false,
-    prevPosition: {},
-    initialView: null,
-    previewMode: false,
-    showPublish: false,
+    hasTwoWayLink: "no",
+    showSuccessAlert: false,
+    showErrorAlert: false,
+    dismissSecs: 5,
+    dismissCountDown: 0,
+    alertMessage: "kfmklfd",
   }),
+  computed: {
+    ...mapState("tour", [
+      "currentView",
+      "previewMode",
+      "viewPostion",
+      "initialView",
+      "defaultViewPostion",
+      "hotspotNodes",
+      "selectedImageId",
+    ]),
+    choiceImages() {
+      return this.hotspotNodes.filter(
+        (node) => node.id != this.selectedImageId
+      );
+    },
+  },
   methods: {
-    updateImage(image) {
-      const currentNode = this.hotspotNodes.find((node) => node.id == image.id);
-      this.currentView = currentNode;
-      this.tourPlugin.setCurrentNode(currentNode.id);
+    ...mapActions("tour", [
+      "setSelectedNode",
+      "setPreviewMode",
+      "setViewPostion",
+      "addMarkers",
+      "addLinks",
+      "deleteNode",
+      "updateLink",
+      "setHostspots",
+      "addHostspots",
+      "setInitialView",
+      "postTour",
+      "reLink",
+    ]),
+    showSuccess(msg) {
+      this.alertMessage = msg;
+      this.showSuccessAlert = true;
+    },
+    showError(msg) {
+      this.alertMessage = msg;
+      this.showErrorAlert = true;
     },
     handlePositionSelected(_, data) {
       if (this.previewMode) return;
       if (this.isLinkHotspotOn || this.isPositionSelect) {
-        const { longitude, latitude } = data;
-        this.viewPostion = { longitude, latitude };
+        this.setViewPostion({
+          longitude: data.longitude,
+          latitude: data.latitude + 0.15,
+        });
         this.showModal = true;
       }
       this.isLinkHotspotOn = false;
@@ -180,113 +225,119 @@ export default {
         id: image.id,
         panorama: image.data,
         links: links,
+        name: image.name,
       };
       return node;
     },
-    createMarker(pos, toNodeId = null, image = null) {
+    createMarker(position, toNodeId = null, image = null) {
       const marker = {
         id: uuidv4(),
         image: image ?? require("~/assets/images/svg/arrow-up.256x256.png"),
         tooltip: "Move to the next scene",
         width: 48,
         height: 48,
-        latitude: pos.latitude,
-        longitude: pos.longitude,
-        anchor: "center",
+        latitude: position.latitude,
+        longitude: position.longitude,
+        anchor: "bottom center",
         linksTo: toNodeId,
       };
 
       return marker;
     },
-    addImages(images) {
+    async addImages(images) {
       if (!images.length) return;
-      this.hotspotNodes = images.map((image) => this.createHotspot(image));
-      for (let index = 0; index < this.hotspotNodes.length - 1; index++) {
-        const currentNode = this.hotspotNodes[index];
-        const nextNode = this.hotspotNodes[index + 1];
-        const marker = this.createMarker(this.viewPostion, nextNode.id);
-        currentNode.links = [
-          {
-            nodeId: nextNode.id,
-            ...this.viewPostion,
-          },
-        ];
-        currentNode.markers = [marker];
+      const isExistingHotspot = this.hotspotNodes.length > 0;
+      const hotspotNodes = images.map((image) => this.createHotspot(image));
 
-        if (index + 1 == this.hotspotNodes.length - 1) {
+      for (let index = 0; index < hotspotNodes.length; index++) {
+        if (index == hotspotNodes.length - 1) {
+          const nextNode = hotspotNodes[index];
+          const nodeTo = isExistingHotspot
+            ? this.hotspotNodes[0]
+            : hotspotNodes[0];
+          nextNode.markers = [
+            this.createMarker(this.defaultViewPostion, nodeTo.id),
+          ];
           nextNode.links = [
             {
-              nodeId: this.hotspotNodes[0].id,
-              ...this.viewPostion,
+              nodeId: nodeTo.id,
+              ...this.defaultViewPostion,
             },
           ];
-          nextNode.markers = [
-            this.createMarker(this.viewPostion, this.hotspotNodes[0].id),
+        } else {
+          const currentNode = hotspotNodes[index];
+          const nextNode = hotspotNodes[index + 1];
+          const marker = this.createMarker(
+            this.defaultViewPostion,
+            nextNode.id
+          );
+          currentNode.markers = [marker];
+          currentNode.links = [
+            {
+              nodeId: nextNode.id,
+              ...this.defaultViewPostion,
+            },
           ];
         }
       }
 
-      this.tourPlugin.setNodes(this.hotspotNodes, this.hotspotNodes[0].id);
-      this.images = images;
-      if (this.initialView) {
-        this.tourPlugin.setCurrentNode(this.initialView.id);
-        this.currentView = this.initialView;
-      } else {
-        this.currentView = images[0];
-        this.initialView = this.currentView;
+      if (isExistingHotspot) {
+        const firstOfNewNode = hotspotNodes[0];
+        const lastOfExistingNode =
+          this.hotspotNodes[this.hotspotNodes.length - 1];
+        this.reLink({
+          nodeId: lastOfExistingNode.id,
+          toNodeId: this.hotspotNodes[0].id,
+          link: {
+            nodeId: firstOfNewNode.id,
+            ...this.defaultViewPostion,
+          },
+        });
       }
-    },
-    handleImageSelect(node) {
-      this.selectedImageId = this.selectedImageId ? null : node.id;
+      if (isExistingHotspot) {
+        this.addHostspots(hotspotNodes);
+      } else {
+        this.setHostspots(hotspotNodes);
+      }
+      this.tourPlugin.setNodes(this.hotspotNodes, this.currentView);
     },
     linkHostpot() {
-      const currentNode = this.hotspotNodes.find(
-        (node) => node.id == this.currentView.id
-      );
       if (this.isPositionSelect) {
-        const n = currentNode.links.find(
-          (link) =>
-            link.latitude == this.prevPosition.latitude &&
-            link.longitude == this.prevPosition.longitude
-        );
-        n.nodeId = this.selectedImageId;
-      } else {
-        const currentNodeMarker = this.createMarker(this.viewPostion);
-        currentNode.links.push({
-          nodeId: this.selectedImageId,
-          ...this.viewPostion,
+        this.updateLink({
+          markerId: this.selectedMarkerId,
+          imgId: this.choosenImageId,
         });
-        currentNode.markers.push(currentNodeMarker);
+        this.showSuccess("Link Updated Successfully!");
+      } else {
+        const currentNodeMarker = this.createMarker(
+          this.viewPostion,
+          this.choosenImageId
+        );
+        this.addMarkers({ marker: currentNodeMarker });
+        this.addLinks({
+          link: {
+            nodeId: this.choosenImageId,
+            ...this.viewPostion,
+          },
+        });
+        if (this.hasTwoWayLink == "yes") {
+          this.addMarkers({
+            marker: this.createMarker(this.viewPostion, this.currentView),
+            toId: this.choosenImageId,
+          });
+          this.addLinks({
+            link: {
+              nodeId: this.currentView,
+              ...this.viewPostion,
+            },
+            toId: this.choosenImageId,
+          });
+        }
+        this.showSuccess("Link Added Successfully!");
       }
-      this.tourPlugin.setCurrentNode(currentNode.id);
+      this.tourPlugin.setCurrentNode(this.currentView);
       this.showModal = false;
       this.isPositionSelect = false;
-    },
-    getImages() {
-      return this.hotspotNodes.filter((node) => node.id != this.currentView.id);
-    },
-    handlePublish() {
-      // TODO: check if all nodes are connected before publish!!
-      // const formData = FormData();
-      // formData.append(`viewPosition`, this.viewPostion);
-      // const d = [
-      //   {
-      //     nodeId: "",
-      //     links: [{}],
-      //     markers: [
-      //       {
-      //         image: "image",
-      //       },
-      //     ],
-      //     panorama: "image",
-      //   },
-      // ];
-      // this.hotspotNodes.forEach((data, index) => {
-      //   const nodeData = Object.assign({}, data);
-      //   formData.append(`nodeData[${index}][image]`, nodeData.panorama);
-      //   nodeData.panorama = undefined;
-      //   formData.append(`nodeData[${index}][node]`, nodeData);
-      // });
     },
     handleMarkerClick({ element: container, id }) {
       if (this.previewMode) return;
@@ -317,6 +368,7 @@ export default {
         btn.classList.add("marker-btn", `marker-btn-${idx}`);
         btn.addEventListener("click", (e) => {
           e.stopPropagation();
+          this.selectedMarkerId = id;
           if (buttons[idx].id == 1) {
             this.handleMarkerEdit(id);
           }
@@ -330,71 +382,105 @@ export default {
       btnContainer.classList.add("marker-btn-container");
       container.appendChild(btnContainer);
     },
-    handleMarkerEdit(id) {
-      const marker = this.markerPlugin.getMarker(id);
-      const { latitude, longitude } = marker.config;
-      this.prevPosition = { latitude, longitude };
+    handleMarkerEdit(_) {
       this.isPositionSelect = true;
       this.showModal = true;
     },
-    async handleMarkerDelete(id) {
-      const currentNode = this.hotspotNodes.find(
-        (node) => node.id == this.currentView.id
-      );
-      const nIdx = currentNode.links.findIndex(
-        (link) =>
-          link.latitude == this.prevPosition.latitude &&
-          link.longitude == this.prevPosition.longitude
-      );
-      currentNode.links.splice(nIdx, 1);
-      this.markerPlugin.removeMarker(id);
-      const mIdx = currentNode.markers.findIndex((marker) => marker.id == id);
-      currentNode.markers.splice(mIdx, 1);
-    },
-    setInitialView() {
-      this.initialView = this.currentView;
+    async handleMarkerDelete(markerId) {
+      this.deleteNode(markerId);
+      this.markerPlugin.removeMarker(markerId);
+      this.tourPlugin.setNodes(this.hotspotNodes, this.hotspotNodes[0].id);
+      this.showSuccess("Marker deleted!");
     },
     viewMode() {
+      this.setPreviewMode(true);
       this.viewer.enterFullscreen();
     },
-    nodeRemoved(nodeId) {
-      this.hotspotNodes.forEach((node) => {
-        if (node.id != nodeId) {
-          node.links = node.links.filter((link) => link.nodeId != nodeId);
-          node.markers = node.markers.filter(
-            (marker) => marker.linksTo != nodeId
-          );
-        }
+    removeNode(_) {
+      if (this.hotspotNodes.length > 0) {
+        this.tourPlugin.setNodes(this.hotspotNodes, this.hotspotNodes[0].id);
+      } else {
+        this.viewer.setPanorama(
+          require("~/assets/images/default_paranoma.jpg")
+        );
+      }
+    },
+    updateSelected(nodeId) {
+      this.tourPlugin.setCurrentNode(nodeId);
+    },
+    async handlePublish() {
+      // TODO: check if all nodes are connected before publish!!
+      if (!this.nodeConnectionIsValid()) {
+        this.$toast.error("Please connect all nodes before publishing");
+        return;
+      }
+      const formData = new FormData();
+      this.hotspotNodes.forEach((data) => {
+        formData.append(data.id, data.panorama);
       });
-      this.hotspotNodes = this.hotspotNodes.filter((node) => node.id != nodeId);
-      this.viewer.setPanorama(this.hotspotNodes[0].panorama);
-      this.tourPlugin.setNodes(this.hotspotNodes);
+
+      const allData = {
+        initialView: this.currentView,
+        defaultViewPosition: this.defaultViewPostion,
+        hotspotNodes: this.hotspotNodes.map((data) => ({
+          ...data,
+          panorama: "",
+        })),
+      };
+      formData.append(`data`, JSON.stringify(allData));
+      await this.postTour({ _data: formData, id: 4 });
+    },
+    nodeConnectionIsValid() {
+      const nodes = this.hotspotNodes;
+      const connectedNodes = nodes.filter((node) => node.links.length);
+      const unconnectedNodes = nodes.filter((node) => !node.links.length);
+      if (connectedNodes.length == nodes.length) {
+        return true;
+      }
+      if (unconnectedNodes.length) {
+        return false;
+      }
+      return true;
     },
   },
   mounted() {
+    // load from index db
     this.viewer = new Viewer({
       container: this.$refs.viewRef,
-      panorama: this.selectedView,
+      panorama: this.hotspotNodes.find((h) => h.id == this.initialView?.id)
+        ?.panorama,
       plugins: [VirtualTourPlugin, MarkersPlugin],
     });
+
     this.tourPlugin = this.viewer.getPlugin(VirtualTourPlugin);
     this.markerPlugin = this.viewer.getPlugin(MarkersPlugin);
+
+    if (!!this.hotspotNodes.length) {
+      this.tourPlugin.setNodes(this.hotspotNodes, this.currentView);
+    }
+
     this.viewer.on("click", this.handlePositionSelected);
     this.tourPlugin.on("node-changed", (e) => {
       const cNode = e.args[0];
       if (cNode) {
-        this.$emit("updateSelectedImage", cNode);
-        this.currentView = this.hotspotNodes.find((node) => node.id == cNode);
+        this.setSelectedNode(cNode);
       }
     });
     this.markerPlugin.on("select-marker", ({ args }) => {
       this.handleMarkerClick({ element: args[0].$el, id: args[0].id });
     });
     this.viewer.on("fullscreen-updated", ({ args }) => {
-      this.previewMode = args[0];
+      this.setPreviewMode(args[0]);
     });
+
+    setInterval(() => {
+      if (this.showErrorAlert || this.showSuccessAlert) {
+        this.showErrorAlert = false;
+        this.showSuccessAlert = false;
+      }
+    }, 3000);
   },
-  beforeDestroy() {
+  async beforeDestroy() {
     if (this.viewer) {
       this.viewer.destroy();
     }

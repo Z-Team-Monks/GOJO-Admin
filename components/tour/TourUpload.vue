@@ -16,12 +16,12 @@
     <div class="scrollable-div">
       <draggable
         @change="onUnpublishedChange"
-        v-model="images"
+        v-model="all_images"
         ghost-class="ghost"
       >
         <transition-group>
           <div
-            v-for="image in images"
+            v-for="image in all_images"
             :key="image.name"
             class="card mb-3 text-dark"
             @click="handleImageSelect(image)"
@@ -29,7 +29,7 @@
             <div
               :class="[
                 'p-2 d-flex justify-content-between',
-                isSelectedImage(image) ? 'bg-info text-white' : '',
+                selectedImageId == image.id ? 'bg-info text-white' : '',
               ]"
             >
               <div class="d-flex w-75">
@@ -40,7 +40,7 @@
                 <i
                   class="mdi mdi-delete mdi-36px"
                   style="color: rgb(169, 24, 24)"
-                  @click="deleteImage(image)"
+                  @click="deleteItem(image)"
                 ></i>
                 <i class="mdi mdi-pencil mdi-36px ml-4"></i>
               </div>
@@ -61,6 +61,7 @@
 <script>
 import draggable from "vuedraggable";
 import { v4 as uuidv4 } from "uuid";
+import { mapState, mapGetters, mapActions } from "vuex";
 
 export default {
   name: "TourUpload",
@@ -68,21 +69,25 @@ export default {
     draggable,
   },
   data: () => ({
-    images: [],
-    selectedImage: null,
+    all_images: [],
   }),
+  computed: {
+    ...mapState("tour", ["selectedImageId"]),
+    ...mapGetters("tour", ["hotspotNodes"]),
+  },
   methods: {
+    ...mapActions("tour", ["deleteImage", "addImages", "setSelectedNode"]),
     openFileInput() {
       this.$refs.fileInput.click();
     },
-    deleteImage(image) {
-      this.images = this.images.filter((el) => el.name != image.name);
-      this.$emit("onImageDeleted", image.id);
+    deleteItem(image) {
+      this.deleteImage(image.id);
+      this.all_images = this.extractImages();
+      this.$emit("onImageDelete", image.id);
     },
     async handleFileChange(event) {
       const images = event.target.files;
-      const vm = this;
-
+      const uploadedImages = [];
       await Promise.all(
         Array.from(images).map(async (image) => {
           const file = image;
@@ -92,7 +97,7 @@ export default {
             reader.readAsDataURL(file);
           });
 
-          vm.images.unshift({
+          uploadedImages.unshift({
             id: uuidv4(),
             name: file.name,
             data: result,
@@ -100,22 +105,26 @@ export default {
           return result;
         })
       );
-      this.selectedImage = this.images[0];
-      vm.$emit("onUpload", this.images);
+      this.all_images.push(...uploadedImages);
+      this.$emit("onUpload", uploadedImages);
     },
     handleImageSelect(image) {
-      this.selectedImage = image;
-      this.$emit("selectImage", image);
-    },
-    isSelectedImage(image) {
-      return this.selectedImage && image.id == this.selectedImage.id;
-    },
-    updateSelected(imageId) {
-      this.selectedImage = this.images.find((img) => img.id == imageId);
+      this.setSelectedNode(image.id);
+      this.$emit("onImageSelected", image.id);
     },
     onUnpublishedChange(e) {
       console.log(e);
     },
+    extractImages() {
+      return this.hotspotNodes.map((node) => ({
+        id: node.id,
+        name: node.name,
+        data: node.panorama,
+      }));
+    },
+  },
+  mounted() {
+    this.all_images = this.extractImages();
   },
 };
 </script>
@@ -128,6 +137,5 @@ export default {
 .ghost {
   opacity: 1;
   background-color: #28a745;
-  /* Add any other styles for the dragging item */
 }
 </style>
