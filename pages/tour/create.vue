@@ -24,19 +24,18 @@
           <tour-property />
           <tour-upload
             ref="uploadRef"
-            @selectImage="handleImage"
             @onUpload="onUpload"
-            @onImageDeleted="handleImageDelete"
+            @onImageDelete="handleImageDelete"
+            @onImageSelected="handleImageSelected"
           />
         </div>
         <div class="col-lg-9 col-sm-12">
           <div class="text-center">
-            <h2 v-if="!selectedImage" class="mt-10">Pick Image to Start</h2>
+            <h2 v-if="!hotspotNodes.length" class="mt-10">
+              Pick Image to Start
+            </h2>
           </div>
-          <tour-canvas
-            ref="canvasRef"
-            @updateSelectedImage="handleImageChange"
-          />
+          <tour-canvas ref="canvasRef" />
         </div>
       </div>
     </div>
@@ -47,6 +46,7 @@
 import TourCanvas from "../../components/tour/TourCanvas.vue";
 import TourProperty from "../../components/tour/TourProperty.vue";
 import TourUpload from "../../components/tour/TourUpload.vue";
+import { mapState, mapGetters, mapActions } from "vuex";
 
 export default {
   components: {
@@ -58,11 +58,10 @@ export default {
   data: () => ({
     selectedImage: false,
   }),
+  computed: {
+    ...mapGetters("tour", ["hotspotNodes"]),
+  },
   methods: {
-    handleImage(image) {
-      const canvasRef = this.$refs.canvasRef;
-      canvasRef.updateImage(image);
-    },
     onUpload(images) {
       const canvasRef = this.$refs.canvasRef;
       canvasRef.addImages(images);
@@ -72,9 +71,13 @@ export default {
       const uploadRef = this.$refs.uploadRef;
       uploadRef.updateSelected(imageId);
     },
+    handleImageSelected(imageId) {
+      const canvasRef = this.$refs.canvasRef;
+      canvasRef.updateSelected(imageId);
+    },
     handleImageDelete(imageId) {
       const canvasRef = this.$refs.canvasRef;
-      canvasRef.nodeRemoved(imageId);
+      canvasRef.removeNode(imageId);
     },
   },
 };

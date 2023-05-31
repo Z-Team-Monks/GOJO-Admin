@@ -5,7 +5,7 @@
     </div>
     <ul class="list-group list-group-flush shadow-sm">
       <div
-        v-for="tourProperty in tourProperies"
+        v-for="tourProperty in tourProperties"
         :key="tourProperty.name"
         class="list-group-item rounded-4 mb-2"
       >
@@ -16,6 +16,8 @@
             :aria-label="tourProperty.name"
             :disabled="tourProperty.disabled"
             :placeholder="tourProperty.placeholder"
+            :value="tourProperty.value"
+            @input="updatePropertyValue(tourProperty.name, $event.target.value)"
           />
           <span class="input-group-text border border-0 bg-white"
             ><i
@@ -23,7 +25,7 @@
                 'mdi mdi-36px',
                 tourProperty.disabled ? 'mdi-pencil' : 'mdi-check',
               ]"
-              @click="toggleEdit(tourProperty.name)"
+              @click="toggleEdit(tourProperty)"
             ></i
           ></span>
         </div>
@@ -33,10 +35,12 @@
 </template>
 
 <script>
+import { mapState, mapActions } from "vuex";
+
 export default {
   name: "TourProperty",
   data: () => ({
-    tourProperies: [
+    tourProperties: [
       {
         name: "author",
         placeholder: "Author",
@@ -52,9 +56,19 @@ export default {
     ],
   }),
   methods: {
-    toggleEdit(prop) {
-      let tourProperty = this.tourProperies.find((el) => el.name === prop);
+    ...mapActions("tour", ["updateProperty"]),
+    toggleEdit(data) {
+      let tourProperty = this.tourProperties.find(
+        (el) => el.name === data.name
+      );
+      if (!tourProperty.disabled) {
+        this.updateProperty(tourProperty);
+      }
       tourProperty.disabled = !tourProperty.disabled;
+    },
+    updatePropertyValue(name, value) {
+      let tourProperty = this.tourProperties.find((el) => el.name === name);
+      tourProperty.value = value;
     },
   },
 };
