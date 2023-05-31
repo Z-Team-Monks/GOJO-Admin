@@ -7,11 +7,36 @@
         <div class="col-sm-4" v-for="content in cardContent" :key="content.id">
           <card :content="content" />
         </div>
-        <div class="col-12 mt-5">
-          <tabs class="nav-pills nav-fill" :data="tabsData"></tabs>
-          <div class="tab-content p-3">
+        <div class="col-12">
+          <div class="row border-bottom justify-content-between">
+            <div class="col-sm-8">
+              <tabs class="nav-pills nav-fill" :data="tabsData"></tabs>
+            </div>
+            <div class="col-sm-4">
+              <b-button
+                @click="showM"
+                variant="success"
+                class="btn-labeled float-right"
+              >
+                <span class="btn-label"><i class="mdi mdi-plus"></i></span
+                >Create User
+              </b-button>
+            </div>
+
+            <user-modal
+              :show-modal="showModal"
+              :create-user="true"
+              :modal-data="modalData"
+              @cancel="cancelModal"
+            ></user-modal>
+          </div>
+          <div class="tab-content pt-3">
             <div class="tab-pane fade show active" id="all">
-              <Table :users="userList" :columns="columns" />
+              <Table
+                :users="userList"
+                :show-modal="showModal"
+                :columns="columns"
+              />
             </div>
           </div>
         </div>
@@ -26,16 +51,18 @@ import tabs from "../elements/tab.vue";
 import sidebar from "../elements/sidebar.vue";
 import Navbar from "../elements/navbar.vue";
 import Table from "../elements/users-table.vue";
-
-import { mapGetters,mapActions } from 'vuex';
+import userModal from "../elements/user-modal.vue";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
-  components: { card, tabs, sidebar, Navbar, Table },
+  components: { card, tabs, sidebar, Navbar, Table, userModal },
   name: "home",
 
   data() {
     return {
-      columns: ["First Name", "Last Name", "Phone", "Role", "Status"],
+      showModal: false,
+      modalData: {},
+      columns: ["First Name", "Last Name", "Phone", "Role", "Status", "Action"],
       // users: [
       //   {
       //     id: "1",
@@ -120,40 +147,46 @@ export default {
       ],
     };
   },
-  created(){
-    this.currentUser
+  created() {
+    this.currentUser;
     if (process.browser) {
       this.fetchUserData();
     }
   },
   computed: {
-    ...mapGetters('auth',['isAuthenticated', 'currentUser']),
+    ...mapGetters("auth", ["isAuthenticated", "currentUser0"]),
     userList: {
       get() {
-        return this.currentUser;
+        return this.currentUser0;
       },
       set(value) {
         // You can handle the setter logic if required
         // For example, if you want to update the userList in the store
-        this.$store.commit('auth/setUser', value);
-      }
-    }
+        this.$store.commit("auth/setUser", value);
+      },
+    },
   },
 
   methods: {
-    ...mapActions('auth',['fetchUser']),
+    ...mapActions("auth", ["fetchUser"]),
     fetchUserData() {
-      if (localStorage && localStorage.getItem('token')) {
+      if (localStorage && localStorage.getItem("token")) {
         this.fetchUser()
           .then(() => {
             // Assign the fetched user data to userList
             this.userList = this.$store.state.auth.user;
-            console.log('User data fetched successfully');
+            console.log("User data fetched successfully");
           })
           .catch((error) => {
-            console.error('Error fetching user data:', error);
+            console.error("Error fetching user data:", error);
           });
       }
+    },
+    showM() {
+      this.showModal = true;
+    },
+    cancelModal() {
+      this.showModal = false;
     },
   },
 };

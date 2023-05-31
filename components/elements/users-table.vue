@@ -6,7 +6,7 @@
       </tr>
     </table>
     <table v-else-if="!isLoading && paginatedUsers.length === 0">
-      <tr class="text-center p-5">
+      <tr>
         <td class="p-5"> No users found</td>
       </tr>
     </table>
@@ -79,7 +79,11 @@
               user.phone
             }}
           </td>
-          <td>{{ user.role }}</td>
+          <td v-if="user.role == 1">Tenant</td>
+          <td v-else-if="user.role == 2">Landlord</td>
+          <td v-else-if="user.role == 3">Financial Manager</td>
+          <td v-else-if="user.role == 4">Listing Manager</td>
+          <td v-else>General Manager</td>
           <td v-if="user.is_active == true">
             <div class="active-stat text-center">
               Active
@@ -90,10 +94,29 @@
              Disabled
             </div>
           </td>
+          <td class="row">
+            <div class="col-sm-6 edit-icon mr-1" @click="showM(user)">
+              <i class="mdi mdi-account-edit"></i>
+            </div>
+              
+            <!-- <div class="col-sm-6 delete-icon" @click="showM2(user)">
+              <i class="mdi mdi-delete"></i>
+            </div> -->
+          </td>
         </tr>
       </tbody>
     </table>
-
+    <user-modal
+      :show-modal="showModal"
+      :modal-data="user"
+      :create-user="false"
+      @cancel="cancelModal"
+    ></user-modal>
+    <confirmation-modal
+      :show-delete-modal="showModal2"
+      :modal-data="user"
+      @cancel="cancelModal2"
+    ></confirmation-modal>
     <nav aria-label="Page navigation nav-style" class="pagination-wrapper">
       <ul class="pagination">
         <li
@@ -142,7 +165,11 @@
 </template>
   
   <script>
+import userModal from '../elements/user-modal.vue'
+import ConfirmationModal from './confirmation.modal.vue';
+
 export default {
+  components: {userModal, ConfirmationModal},
   props: {
     users: {
       Type: Array,
@@ -152,6 +179,7 @@ export default {
       Type: Object,
     },
   },
+  
   data() {
     return {
       searchMode: false,
@@ -161,6 +189,9 @@ export default {
       currentPage: 1,
       rowsPerPage: 10,
       selected: [],
+      showModal:false,
+      showModal2:false,
+      user:[],
     };
   },
   computed: {
@@ -229,7 +260,22 @@ export default {
       return value.charAt(0).toUpperCase() + value.slice(1);
     },
   },
+
   methods: {
+    showM(user) {
+        this.showModal = true
+        this.user = user
+    },
+    cancelModal(){
+      this.showModal = false
+    },
+    showM2(user) {
+        this.showModal2 = true
+        this.user = user
+    },
+    cancelModal2(){
+      this.showModal2 = false
+    },
     filterEmployees() {
       this.filteredEmployees = this.users.results.filter((user) => {
     const fullName = `${user.first_name} ${user.last_name}`;

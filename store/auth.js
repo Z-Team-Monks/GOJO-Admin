@@ -3,12 +3,31 @@ export const state = () => ({
     token: null,
     user: null,
     loading: false,
+    updateError: null,
+    updateSuccess: false,
+    deleteError: null,
+    deleteSuccess: false,
+    postError: null,
+    postSuccess: false,
+    currentUser: {},
+    getError: null,
+    getSuccess: false,
+    baseUrl: 'http://192.168.50.207:8000/api/v1',
   })
 
 
   export const getters = {
     isAuthenticated: (state) => !!state.token,
-    currentUser: (state) => state.user,
+    currentUser0: (state) => state.user,
+    getUpdateError: state => state.updateError,
+    getUpdateSuccess: state => state.updateSuccess,
+    getDeleteSuccess: (state) => state.deleteSuccess,
+    getDeleteError: (state) => state.deleteError,
+    getPostSuccess: (state) => state.postSuccess,
+    getPostError: (state) => state.postError,
+    currentUser: (state) => state.currentUser,
+    getSuccess: (state) => state.getSuccess,
+    getError: (state) => state.getError,
   };
 
   export const mutations = {
@@ -29,13 +48,46 @@ export const state = () => ({
       },
     clearUser(state){
         state.user = null
-    }
+    },
+    setUpdateError(state, error) {
+      state.updateError = error;
+    },
+    setUpdateSuccess(state, status) {
+      state.updateSuccess = status;
+    },
+    setDeleteSuccess(state, value) {
+      state.deleteSuccess = value;
+    },
+    setDeleteError(state, value) {
+      state.deleteError = value;
+    },
+    setPostSuccess(state, value) {
+      state.postSuccess = value;
+    },
+    setPostError(state, value) {
+      state.postError = value;
+    },
+    setPostSuccess(state, value) {
+      state.postSuccess = value;
+    },
+    setPostError(state, value) {
+      state.postError = value;
+    },
+    setCurrentUser(state, value) {
+      state.currentUser = value;
+    },
+    setGetSuccess(state, value) {
+      state.getSuccess = value;
+    },
+    setGetError(state, value) {
+      state.getError = value;
+    },
   }
   
   export const actions = {
-    async login({ commit }, { username, password}) {
+    async login({ commit, state }, { username, password}) {
       try {
-        const response = await fetch('https://api.natnaelabay.com/api/v1/users/login/', {
+        const response = await fetch(`${state.baseUrl}/users/admin_login/`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -56,11 +108,11 @@ export const state = () => ({
         const data = await response.json()
         
         // Save the token in localStorage
-      localStorage.setItem('token', data.token);
-
+      localStorage.setItem('token', data.user.token);
+       console.log(data)
   
         // You would usually save the token here
-        commit('setToken', data.token)
+        commit('setToken', data.user.token)
   
         // You would usually save the user data here
         commit('setUser', data.user)
@@ -79,7 +131,7 @@ export const state = () => ({
             if (!token) {
               throw new Error('Token not found');
             }
-          const response = await fetch('https://api.natnaelabay.com/api/v1/users/', {
+          const response = await fetch(`${state.baseUrl}/users/`, {
             method: 'GET',
             headers: {
               'Authorization': `Token ${token}`,
@@ -104,10 +156,10 @@ export const state = () => ({
         }
       },
 
-      async logout({ commit }) {
+      async logout({ commit ,state}) {
         try {
           // Fetch user information from the '/user/me/' endpoint
-          const response = await fetch('https://api.natnaelabay.com/api/v1/users/me/', {
+          const response = await fetch(`${state.baseUrl}/users/me/`, {
             headers: {
               'Authorization': `Token ${localStorage.getItem('token')}`
             },
@@ -131,7 +183,7 @@ export const state = () => ({
           };
     
           // Send the logout request
-          const logoutResponse = await fetch('https://api.natnaelabay.com/api/v1/users/logout/', {
+          const logoutResponse = await fetch(`${state.baseUrl}/users/logout/`, {
             method: 'POST',
             headers: {
                 'Authorization': `Token ${localStorage.getItem('token')}`,
@@ -157,6 +209,123 @@ export const state = () => ({
           this.$router.push('/');
         } catch (error) {
           console.error(error);
+        }
+      },
+      async createUser({ commit, dispatch,state }, user) {
+
+        const token = localStorage.getItem('token');
+        if (!token) {
+          throw new Error('Token not found');
+        }
+        const url = `${state.baseUrl}/users/`;
+        const options = {
+          method: 'POST',
+          headers: {
+            'Authorization': `Token ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(user),
+        };
+        try {
+          const response = await fetch(url, options);
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          // You may want to retrieve the response body depending on the API design.
+          commit('setPostSuccess', true);
+          commit('setPostError', null);
+          dispatch('fetchUser')
+        } catch (error) {
+          commit('setPostSuccess', false);
+          commit('setPostError', error.message);
+        }
+      },
+      updateUser({ commit, dispatch,state }, userData) {
+        const token = localStorage.getItem('token');
+            if (!token) {
+              throw new Error('Token not found');
+            }
+        const url = `${state.baseUrl}/users/${userData.id}/`;
+        const options = {
+          method: 'PATCH',
+          headers: {
+            'Authorization': `Token ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(userData),
+        };
+        fetch(url, options)
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+          })
+          .then((json) => {
+            commit('setUser', json);
+            dispatch('fetchUser')
+            dispatch('fetchCurrentUser')
+            commit('setUpdateSuccess', true);
+            commit('setUpdateError', null);
+          })
+          .catch((error) => {
+            commit('setUpdateSuccess', false);
+            commit('setUpdateError', error.message);
+          });
+      },
+      async deleteUser({ commit, dispatch,state }, userId) {
+        const token = localStorage.getItem('token');
+            if (!token) {
+              throw new Error('Token not found');
+            }
+        const url = `${state.baseUrl}/users/${userId}/`;
+        const options = {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Token ${token}`,
+            'Content-Type': 'application/json',
+          },
+        };
+        try {
+          const response = await fetch(url, options);
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          // You may want to retrieve the response body depending on the API design.
+          dispatch('fetchUser')
+          commit('setDeleteSuccess', true);
+          commit('setDeleteError', null);
+        } catch (error) {
+          commit('setDeleteSuccess', false);
+          commit('setDeleteError', error.message);
+        }
+      },
+      async fetchCurrentUser({ commit, state }) {
+        const token = localStorage.getItem('token');
+            if (!token) {
+              throw new Error('Token not found');
+            }
+        const url = `${state.baseUrl}/users/me/`;
+        const options = {
+          method: 'GET',
+          headers: {
+            'Authorization': `Token ${token}`,
+            'Content-Type': 'application/json',
+            // Include your authentication token here if necessary
+          },
+        };
+        try {
+          const response = await fetch(url, options);
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          const data = await response.json();
+          commit('setCurrentUser', data);
+          commit('setGetSuccess', true);
+          commit('setGetError', null);
+        } catch (error) {
+          commit('setGetSuccess', false);
+          commit('setGetError', error.message);
         }
       },
   }
