@@ -149,6 +149,12 @@ import { mapState, mapActions } from "vuex";
 
 export default {
   name: "TourCanvas",
+  props: {
+    propertyId: {
+      type: String,
+      required: true,
+    },
+  },
   components: {
     PublishTour,
   },
@@ -409,11 +415,11 @@ export default {
       this.tourPlugin.setCurrentNode(nodeId);
     },
     async handlePublish() {
-      // TODO: check if all nodes are connected before publish!!
       if (!this.nodeConnectionIsValid()) {
-        this.$toast.error("Please connect all nodes before publishing");
+        this.showError("Please connect all tour before publishing");
         return;
       }
+      this.showPublish = true;
       const formData = new FormData();
       this.hotspotNodes.forEach((data) => {
         formData.append(data.id, data.panorama);
@@ -428,7 +434,12 @@ export default {
         })),
       };
       formData.append(`data`, JSON.stringify(allData));
-      await this.postTour({ _data: formData, id: 4 });
+      try {
+        await this.postTour({ data: formData, id: this.propertyId });
+      } catch (error) {
+        this.showPublish = false;
+        this.showError("Unable to publish the tour!");
+      }
     },
     nodeConnectionIsValid() {
       const nodes = this.hotspotNodes;
@@ -478,7 +489,7 @@ export default {
         this.showErrorAlert = false;
         this.showSuccessAlert = false;
       }
-    }, 3000);
+    }, 4000);
   },
   async beforeDestroy() {
     if (this.viewer) {

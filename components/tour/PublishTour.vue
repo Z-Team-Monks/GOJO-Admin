@@ -1,7 +1,9 @@
 <template>
   <div ref="confettiTarget" class="w-100 confetti-target p-3">
     <div class="w-100 mb-5 border border-1 p-2 py-5 rounded rounded-2">
-      <h4 class="text-center mb-2">Publishing Tour...</h4>
+      <h4 class="text-center mb-2">
+        {{ !tourPublished ? "Publishing Tour..." : "Tour Published" }}
+      </h4>
       <div>
         <b-progress
           :value="uploadProgress"
@@ -18,14 +20,18 @@
       <h5>Here is the link to your hosted tour</h5>
       <div class="d-flex align-items-center">
         <div class="border border-1 px-3 py-2 rounded rounded-2">
-          <a href="#" class="text-dark"
-            >https://icon-sets.iconify.design/clarity/copy-line/</a
+          <a :href="publishedURL" class="text-dark">{{ publishedURL }}</a>
+        </div>
+
+        <div class="d-flex justify-content-center align-items-center">
+          <i
+            @click="copyUrl"
+            role="button"
+            class="mdi mdi-content-copy ml-2 mdi-36px cursor-pointer"
+          >
+            <p v-if="copied">Copied!</p></i
           >
         </div>
-        <i
-          role="button"
-          class="mdi mdi-content-copy ml-2 mdi-36px cursor-pointer"
-        ></i>
       </div>
     </div>
   </div>
@@ -33,15 +39,35 @@
 
 <script>
 import confetti from "canvas-confetti";
+import { mapGetters } from "vuex";
+
 export default {
   name: "TourPublish",
   data: () => ({
-    uploadProgress: 0,
     colors: ["#8b5642", "#6a696b"],
-    end: Date.now() + 30 * 500,
+    copied: false,
+    timer: null,
   }),
+  computed: {
+    ...mapGetters("tour", ["uploadProgress", "tourPublished", "publishedURL"]),
+  },
+  watch: {
+    tourPublished(newVal, oldVal) {
+      if (newVal) {
+        this.timer = setInterval(() => {
+          requestAnimationFrame(this.frame);
+        }, 50);
+      }
+    },
+  },
   methods: {
-    publishTour() {},
+    copyUrl() {
+      navigator.clipboard.writeText(this.publishedURL);
+      this.copied = true;
+      if (this.timer) {
+        clearInterval(this.timer);
+      }
+    },
     frame() {
       confetti({
         particleCount: 3,
@@ -62,13 +88,6 @@ export default {
         colors: this.colors,
       });
     },
-  },
-  mounted() {
-    // setInterval(() => {
-    //   if (Date.now() < this.end) {
-    //     requestAnimationFrame(this.frame);
-    //   }
-    // }, 50);
   },
 };
 </script>
