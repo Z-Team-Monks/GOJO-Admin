@@ -55,31 +55,40 @@
           <div class="mb-10">
             <p class="text-white text-center my-4">Click on the images below</p>
           </div>
-          <div class="grid-view">
-            <div
-              v-for="image in choiceImages"
-              :key="image.id"
-              @click="choosenImageId = image.id"
-              :class="[choosenImageId == image.id ? 'image-item-selected' : '']"
-            >
-              <h5 class="mb-1 ps-1 py-1">Tour</h5>
-              <img
-                class="m-0"
-                :src="image.panorama"
-                alt=""
-                style="height: 150px; aspect-ratio: 1.6"
-              />
+          <div class="w-100 d-flex align-items-center justify-content-center">
+            <div class="grid-view d-flex flex-wrap scrollbar" id="scrollbar1">
+              <div
+                v-for="image in choiceImages"
+                :key="image.id"
+                @click="choosenImageId = image.id"
+                :class="[
+                  'my-4 mx-5  gg',
+                  choosenImageId == image.id ? 'image-item-selected' : '',
+                ]"
+              >
+                <div class="w-75">
+                  <h5 class="mb-1 ps-1 py-1 text-truncate fs-6 text-white">
+                    {{ image.name }}
+                  </h5>
+                </div>
+                <img
+                  class="m-0"
+                  :src="image.panorama"
+                  alt=""
+                  style="height: 150px; aspect-ratio: 1.6"
+                />
+              </div>
             </div>
           </div>
-          <div class="w-100 d-flex justify-content-end">
+          <div class="w-100 d-flex justify-content-end mt-2 btn-sm">
             <div>
-              <b-button
+              <button
+                type="button"
+                class="btn btn-success rounded rounded-3"
                 @click="linkHostpot"
-                :size="'sm'"
-                variant="outline-dark"
-                pill
-                >Link</b-button
               >
+                Link Tour
+              </button>
             </div>
           </div>
         </div>
@@ -130,7 +139,7 @@
         <button
           @click="handlePublish"
           type="button"
-          class="btn btn-success px-5 my-5"
+          class="btn btn-success px-3 my-5 rounded rounded-4"
         >
           Publish
         </button>
@@ -235,11 +244,11 @@ export default {
       };
       return node;
     },
-    createMarker(position, toNodeId = null, image = null) {
+    createMarker(position, { toNodeId = null, image = null, tooltip = null }) {
       const marker = {
         id: uuidv4(),
         image: image ?? require("~/assets/images/svg/arrow-up.256x256.png"),
-        tooltip: "Move to the next scene",
+        tooltip: `Go to ${tooltip ?? "the next scene"}`,
         width: 48,
         height: 48,
         latitude: position.latitude,
@@ -262,7 +271,10 @@ export default {
             ? this.hotspotNodes[0]
             : hotspotNodes[0];
           nextNode.markers = [
-            this.createMarker(this.defaultViewPostion, nodeTo.id),
+            this.createMarker(this.defaultViewPostion, {
+              toNodeId: nodeTo.id,
+              tooltip: nextNode.name,
+            }),
           ];
           nextNode.links = [
             {
@@ -273,10 +285,10 @@ export default {
         } else {
           const currentNode = hotspotNodes[index];
           const nextNode = hotspotNodes[index + 1];
-          const marker = this.createMarker(
-            this.defaultViewPostion,
-            nextNode.id
-          );
+          const marker = this.createMarker(this.defaultViewPostion, {
+            toNodeId: nextNode.id,
+            tooltip: nextNode.name,
+          });
           currentNode.markers = [marker];
           currentNode.links = [
             {
@@ -315,10 +327,13 @@ export default {
         });
         this.showSuccess("Link Updated Successfully!");
       } else {
-        const currentNodeMarker = this.createMarker(
-          this.viewPostion,
-          this.choosenImageId
+        let currentNode = this.hotspotNodes.find(
+          (n) => n.id == this.choosenImageId
         );
+        const currentNodeMarker = this.createMarker(this.viewPostion, {
+          toNodeId: this.choosenImageId,
+          tooltip: currentNode?.name,
+        });
         this.addMarkers({ marker: currentNodeMarker });
         this.addLinks({
           link: {
@@ -327,8 +342,12 @@ export default {
           },
         });
         if (this.hasTwoWayLink == "yes") {
+          currentNode = this.hotspotNodes.find((n) => n.id == this.currentView);
           this.addMarkers({
-            marker: this.createMarker(this.viewPostion, this.currentView),
+            marker: this.createMarker(this.viewPostion, {
+              toNodeId: this.currentView,
+              tooltip: currentNode?.name,
+            }),
             toId: this.choosenImageId,
           });
           this.addLinks({
@@ -453,9 +472,12 @@ export default {
       }
       return true;
     },
+    clearCanvas() {
+      this.setHostspots([]);
+      location.reload();
+    },
   },
   mounted() {
-    // load from index db
     this.viewer = new Viewer({
       container: this.$refs.viewRef,
       panorama: this.hotspotNodes.find((h) => h.id == this.initialView?.id)
@@ -506,6 +528,9 @@ export default {
 .loose-button {
   opacity: 75%;
 }
+.gg {
+  height: 30%;
+}
 .canvas-view {
   position: absolute;
   width: 100%;
@@ -534,12 +559,9 @@ export default {
   padding: 1rem;
 }
 .grid-view {
-  width: 80%;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  justify-items: center;
-  place-items: center;
-  place-content: center;
+  height: 500px;
+  overflow-y: auto;
+  width: 100%;
 }
 .self-align {
   justify-self: end;

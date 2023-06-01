@@ -22,7 +22,7 @@
           <span class="input-group-text border border-0 bg-white"
             ><i
               :class="[
-                'mdi mdi-36px',
+                'mdi mdi-24px',
                 tourProperty.disabled ? 'mdi-pencil' : 'mdi-check',
               ]"
               @click="toggleEdit(tourProperty)"

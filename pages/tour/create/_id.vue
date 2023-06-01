@@ -27,6 +27,7 @@
             @onUpload="onUpload"
             @onImageDelete="handleImageDelete"
             @onImageSelected="handleImageSelected"
+            @onClearUpload="handleImageCleared"
           />
         </div>
         <div class="col-lg-9 col-sm-12">
@@ -79,6 +80,10 @@ export default {
     handleImageDelete(imageId) {
       const canvasRef = this.$refs.canvasRef;
       canvasRef.removeNode(imageId);
+    },
+    handleImageCleared() {
+      const canvasRef = this.$refs.canvasRef;
+      canvasRef.clearCanvas();
     },
   },
   mounted() {

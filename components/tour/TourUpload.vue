@@ -9,11 +9,20 @@
         accept="image/png, image/jpeg"
         multiple
       />
-      <button class="btn btn-success rounded" @click="openFileInput">
-        Upload Images
-      </button>
+      <div class="d-flex bd-highlight">
+        <div class="bd-highlight">
+          <button class="btn btn-secondary rounded" @click="clearUpload">
+            Clear
+          </button>
+        </div>
+        <div class="pl-2 flex-grow-1 bd-highlight">
+          <button class="btn btn-success rounded mb-2" @click="openFileInput">
+            Upload Images
+          </button>
+        </div>
+      </div>
     </div>
-    <div class="scrollable-div">
+    <div class="scrollable-div scrollbar p-2" id="scrollbar1">
       <draggable
         @change="onUnpublishedChange"
         v-model="all_images"
@@ -22,14 +31,14 @@
         <transition-group>
           <div
             v-for="image in all_images"
-            :key="image.name"
-            class="card mb-3 text-dark p-1"
+            :key="image.id"
+            class="card mb-3 text-dark bg-secondary rounded rounded-2"
             @click="handleImageSelect(image)"
           >
             <div
               :class="[
-                'p-2 d-flex justify-content-between',
-                selectedImageId == image.id ? 'bg-info text-white' : '',
+                'p-2 d-flex justify-content-between  rounded rounded-top',
+                selectedImageId == image.id ? 'bg-success text-white' : '',
               ]"
             >
               <div class="d-flex w-75">
@@ -38,11 +47,11 @@
               </div>
               <div class="d-flex">
                 <i
-                  class="mdi mdi-delete mdi-36px"
+                  class="mdi mdi-delete mdi-24px"
                   style="color: rgb(169, 24, 24)"
                   @click="deleteItem(image)"
                 ></i>
-                <i class="mdi mdi-pencil mdi-36px ml-4"></i>
+                <i class="mdi mdi-pencil mdi-24px ml-4"></i>
               </div>
             </div>
             <img
@@ -122,6 +131,10 @@ export default {
         data: node.panorama,
       }));
     },
+    clearUpload() {
+      this.all_images = [];
+      this.$emit("onClearUpload");
+    },
   },
   mounted() {
     this.all_images = this.extractImages();
@@ -131,7 +144,7 @@ export default {
 
 <style>
 .scrollable-div {
-  max-height: 68vh;
+  max-height: 58vh;
   overflow-y: auto;
 }
 .ghost {
