@@ -93,7 +93,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .tour {
   background: #f4f6f8;
   height: 100vh;

@@ -37,8 +37,8 @@
           >
             <div
               :class="[
-                'p-2 d-flex justify-content-between  rounded rounded-top',
-                selectedImageId == image.id ? 'bg-success text-white' : '',
+                'p-2 d-flex justify-content-between  rounded rounded-top text-white',
+                selectedImageId == image.id ? 'bg-success' : '',
               ]"
             >
               <div class="d-flex w-75">
