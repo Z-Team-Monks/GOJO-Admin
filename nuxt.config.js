@@ -56,5 +56,11 @@ export default {
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
     extractCSS: false
-  }
+  },
+
+  publicRuntimeConfig: {
+    localUrl: 'http://localhost:3000',
+    baseUrl: process.env.BASE_URL || 'http://34.163.240.198/api/v1',
+  },
+  privateRuntimeConfig: {}
 }

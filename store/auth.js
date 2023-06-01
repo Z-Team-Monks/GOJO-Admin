@@ -11,8 +11,7 @@ export const state = () => ({
     postSuccess: false,
     currentUser: {},
     getError: null,
-    getSuccess: false,
-    baseUrl: 'http://192.168.50.207:8000/api/v1',
+    getSuccess: false
   })
 
 
@@ -83,11 +82,11 @@ export const state = () => ({
       state.getError = value;
     },
   }
-  
+
   export const actions = {
     async login({ commit, state }, { username, password}) {
       try {
-        const response = await fetch(`${state.baseUrl}/users/admin_login/`, {
+        const response = await fetch(`${this.$config.baseUrl}/users/admin_login/`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -97,26 +96,26 @@ export const state = () => ({
             password,
           }),
         })
-        
+
         if (!response.ok) {
           // Convert non-2xx HTTP response into an error
           const error = new Error('An error occurred while attempting to login')
           error.response = response
           throw error
         }
-  
+
         const data = await response.json()
-        
+
         // Save the token in localStorage
       localStorage.setItem('token', data.user.token);
        console.log(data)
-  
+
         // You would usually save the token here
         commit('setToken', data.user.token)
-  
+
         // You would usually save the user data here
         commit('setUser', data.user)
-        
+
         // Reset the error
         commit('setError', null)
       } catch (error) {
@@ -131,22 +130,22 @@ export const state = () => ({
             if (!token) {
               throw new Error('Token not found');
             }
-          const response = await fetch(`${state.baseUrl}/users/`, {
+          const response = await fetch(`${this.$config.baseUrl}/users/`, {
             method: 'GET',
             headers: {
               'Authorization': `Token ${token}`,
               'Content-Type': 'application/json',
             },
           })
-    
+
           if (!response.ok) {
             const error = new Error('An error occurred while attempting to fetch user data')
             error.response = response
             throw error
           }
-    
+
           const data = await response.json()
-          
+
           // Save the user data
           commit('setUser', data)
           commit('setLoading', false);
@@ -159,20 +158,20 @@ export const state = () => ({
       async logout({ commit ,state}) {
         try {
           // Fetch user information from the '/user/me/' endpoint
-          const response = await fetch(`${state.baseUrl}/users/me/`, {
+          const response = await fetch(`${this.$config.baseUrl}/users/me/`, {
             headers: {
               'Authorization': `Token ${localStorage.getItem('token')}`
             },
           });
-    
+
           if (!response.ok) {
             const error = new Error('An error occurred while fetching user information');
             error.response = response;
             throw error;
           }
-    
+
           const user = await response.json();
-    
+
           // Create the data object in the required format
           const data = {
             first_name: user.first_name,
@@ -181,9 +180,9 @@ export const state = () => ({
             password: user.password,
             phone: user.phone
           };
-    
+
           // Send the logout request
-          const logoutResponse = await fetch(`${state.baseUrl}/users/logout/`, {
+          const logoutResponse = await fetch(`${this.$config.baseUrl}/users/logout/`, {
             method: 'POST',
             headers: {
                 'Authorization': `Token ${localStorage.getItem('token')}`,
@@ -191,19 +190,19 @@ export const state = () => ({
             },
             body: JSON.stringify(data),
           });
-    
+
           if (!logoutResponse.ok) {
             const error = new Error('An error occurred while logging out');
             error.response = logoutResponse;
             throw error;
           }
-    
+
           // Clear the token from local storage
           localStorage.removeItem('token');
-    
+
           // Commit the mutation to clear the user data
           commit('clearUser');
-    
+
           // Redirect to the homepage
           // Replace '/homepage' with the actual route to your homepage
           this.$router.push('/');
@@ -217,7 +216,7 @@ export const state = () => ({
         if (!token) {
           throw new Error('Token not found');
         }
-        const url = `${state.baseUrl}/users/`;
+        const url = `${this.$config.baseUrl}/users/`;
         const options = {
           method: 'POST',
           headers: {
@@ -245,7 +244,7 @@ export const state = () => ({
             if (!token) {
               throw new Error('Token not found');
             }
-        const url = `${state.baseUrl}/users/${userData.id}/`;
+        const url = `${this.$config.baseUrl}/users/${userData.id}/`;
         const options = {
           method: 'PATCH',
           headers: {
@@ -278,7 +277,7 @@ export const state = () => ({
             if (!token) {
               throw new Error('Token not found');
             }
-        const url = `${state.baseUrl}/users/${userId}/`;
+        const url = `${this.$config.baseUrl}/users/${userId}/`;
         const options = {
           method: 'DELETE',
           headers: {
@@ -305,7 +304,7 @@ export const state = () => ({
             if (!token) {
               throw new Error('Token not found');
             }
-        const url = `${state.baseUrl}/users/me/`;
+        const url = `${this.$config.baseUrl}/users/me/`;
         const options = {
           method: 'GET',
           headers: {
@@ -329,4 +328,3 @@ export const state = () => ({
         }
       },
   }
-  

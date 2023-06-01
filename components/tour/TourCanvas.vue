@@ -1,5 +1,5 @@
 <template>
-  <div style="position: relative; width: 100%; height: 80vh">
+  <div class="tour-view" style="position: relative; width: 100%; height: 80vh">
     <div
       id="viewer"
       ref="viewRef"
@@ -26,8 +26,9 @@
         title="Select Tour"
         hide-footer
         hide-header
+        :class="'modal-content'"
       >
-        <div class="p-3 w-100">
+        <div class="p-3 w-100 modal-body">
           <div
             class="d-flex align-items-center w-100 justify-content-between px-4"
           >
@@ -62,7 +63,7 @@
                 :key="image.id"
                 @click="choosenImageId = image.id"
                 :class="[
-                  'my-4 mx-5  gg',
+                  'my-4 mx-2  image-height',
                   choosenImageId == image.id ? 'image-item-selected' : '',
                 ]"
               >
@@ -528,7 +529,7 @@ export default {
 .loose-button {
   opacity: 75%;
 }
-.gg {
+.image-height {
   height: 30%;
 }
 .canvas-view {
@@ -541,13 +542,13 @@ export default {
   justify-content: center;
   align-items: center;
 }
-.modal-content {
-  width: 1200px;
+#modal-center .modal-content {
+  width: 1000px;
   background-color: transparent;
 }
-.modal-body {
+#modal-center .modal-body {
   padding: 0;
-  width: 1200px;
+  width: 1000px;
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -562,6 +563,9 @@ export default {
   height: 500px;
   overflow-y: auto;
   width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .self-align {
   justify-self: end;
