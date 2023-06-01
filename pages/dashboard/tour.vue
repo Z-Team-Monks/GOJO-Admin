@@ -1,5 +1,5 @@
 <template>
-  <div class="container-fluid">
+  <div class="container-fluid tour">
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
       <div class="container-fluid">
         <a class="navbar-brand" href="#">Virtual Tour Details</a>
@@ -55,4 +55,9 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped>
+.tour {
+  background: #f4f6f8;
+  height: 100vh;
+}
+</style>

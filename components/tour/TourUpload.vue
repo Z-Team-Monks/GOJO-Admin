@@ -19,7 +19,7 @@
           <div
             v-for="image in images"
             :key="image.name"
-            class="card mb-3 text-dark"
+            class="card mb-3 text-dark p-1"
             @click="handleImageSelect(image)"
           >
             <div class="p-2 d-flex justify-content-between">
@@ -38,7 +38,7 @@
             </div>
             <img
               :src="image.data"
-              class="card-img-bottom"
+              class="card-img-bottom rounded-1"
               alt="..."
               style="max-height: 250px"
             />

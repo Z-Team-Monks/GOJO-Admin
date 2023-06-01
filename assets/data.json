@@ -1,0 +1,32 @@
+{
+  "marker": {
+    "id": "uuid",
+    "image": "~/assets/images/svg/arrow-up.256x256.png",
+    "tooltip": "Move to the next scene",
+    "width": 48,
+    "height": 48,
+    "latitude": 4.5645,
+    "longitude": 5.23233,
+    "anchor": "center",
+    "linksTo": "toNodeId"
+  },
+  "link": {
+    "nodeId": "uuid",
+    "latitude": 4.5645,
+    "longitude": 5.23233
+  },
+  "hotspotNode": {
+    "id": "uuid",
+    "panorama": "~/assets/images/svg/arrow-up.256x256.png",
+    "links": [],
+    "markers": []
+  },
+  "preset": {
+    "defaultViewPosition": {
+      "latitude": 0.2,
+      "longitude": 0.5
+    },
+    "hotspotNodes": [],
+    "initialView": "nodeId"
+  }
+}

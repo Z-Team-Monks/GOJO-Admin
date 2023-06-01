@@ -20,7 +20,7 @@ $theme:#1BB55C;
 html {
 	display: grid;
 	width: 100%;
-	height: 80%;
+	height: 50%;
 	margin: center;
 
 	background: #DDEFFA;
@@ -183,25 +183,25 @@ body {
 	  align-items: center;
 	  top: 25%;
 	}
-  
+
 	.title-text .title {
 	  font-size: 25px; // reduce title size on smaller screens
 	}
-  
+
 	form {
 	  padding: 1rem 20px;
 	}
-  
+
 	.field {
 	  height: auto; // use auto height for fields on smaller screens
 	  margin-top: 10px; // reduce margin-top for fields on smaller screens
 	}
-  
+
 	.field input {
 	  height: 40px; // reduce input height on smaller screens
 	  font-size: 16px; // reduce input font size on smaller screens
 	}
-  
+
 	.field label {
 	  font-size: 14px; // reduce label font size on smaller screens
 	}
@@ -249,13 +249,13 @@ body {
   .btn-loading {
 	background-color: lightgray !important;
   }
-  
+
   /* Make sure the mdi-loader icon is spinning */
   .mdi-spin {
 	animation: mdi-spin 2s infinite linear;
 	color: #000;
   }
-  
+
   @keyframes mdi-spin {
 	0% {
 	  transform: rotate(0deg);
@@ -430,10 +430,10 @@ body {
 	height: 12px;
 	animation: spin 2s linear infinite;
   }
-  
+
   @keyframes spin {
 	0% { transform: rotate(0deg); }
 	100% { transform: rotate(360deg); }
   }
-  
+
 
