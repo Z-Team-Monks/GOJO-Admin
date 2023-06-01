@@ -27,6 +27,7 @@
             @onUpload="onUpload"
             @onImageDelete="handleImageDelete"
             @onImageSelected="handleImageSelected"
+            @onClearUpload="handleImageCleared"
           />
         </div>
         <div class="col-lg-9 col-sm-12">
@@ -80,6 +81,10 @@ export default {
       const canvasRef = this.$refs.canvasRef;
       canvasRef.removeNode(imageId);
     },
+    handleImageCleared() {
+      const canvasRef = this.$refs.canvasRef;
+      canvasRef.clearCanvas();
+    },
   },
   mounted() {
     this.propertyId = this.$route.params.id;
@@ -88,4 +93,19 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+#scrollbar1::-webkit-scrollbar {
+  width: 10px;
+}
+
+#scrollbar1::-webkit-scrollbar-track {
+  border-radius: 8px;
+  background-color: #e7e7e7;
+  border: 1px solid #cacaca;
+}
+
+#scrollbar1::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  background-color: rgba(17, 101, 0, 0.644);
+}
+</style>
