@@ -98,4 +98,18 @@ export default {
   background: #f4f6f8;
   height: 100vh;
 }
+#scrollbar1::-webkit-scrollbar {
+  width: 10px;
+}
+
+#scrollbar1::-webkit-scrollbar-track {
+  border-radius: 8px;
+  background-color: #e7e7e7;
+  border: 1px solid #cacaca;
+}
+
+#scrollbar1::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  background-color: rgba(17, 101, 0, 0.644);
+}
 </style>
