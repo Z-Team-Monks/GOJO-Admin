@@ -2,7 +2,7 @@
   <div ref="confettiTarget" class="w-100 confetti-target p-3">
     <div class="w-100 mb-5 border border-1 p-2 py-5 rounded rounded-2">
       <h4 class="text-center mb-2">
-        {{ !tourPublished ? "Publishing Tour..." : "Tour Published" }}
+        {{ isPublishing ? "Publishing Tour..." : publishMessage }}
       </h4>
       <div>
         <b-progress
@@ -18,7 +18,7 @@
       class="d-flex flex-column align-items-center"
     >
       <h5>Here is the link to your hosted tour</h5>
-      <div class="d-flex align-items-center">
+      <div v-if="tourPublished" class="d-flex align-items-center">
         <div class="border border-1 px-3 py-2 rounded rounded-2">
           <a :href="publishedURL" class="text-dark">{{ publishedURL }}</a>
         </div>
@@ -47,6 +47,8 @@ export default {
     colors: ["#8b5642", "#6a696b"],
     copied: false,
     timer: null,
+    isPublishing: true,
+    publishMessage: "Fail to publish!",
   }),
   computed: {
     ...mapGetters("tour", ["uploadProgress", "tourPublished", "publishedURL"]),
@@ -54,6 +56,8 @@ export default {
   watch: {
     tourPublished(newVal, oldVal) {
       if (newVal) {
+        this.isPublishing = false;
+        this.publishMessage = "Tour Published";
         this.timer = setInterval(() => {
           requestAnimationFrame(this.frame);
         }, 50);

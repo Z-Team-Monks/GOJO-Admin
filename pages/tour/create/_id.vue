@@ -88,7 +88,9 @@ export default {
   },
   mounted() {
     this.propertyId = this.$route.params.id;
-    console.log(this.propertyId);
+    if (!this.propertyId) {
+      this.$router.push({ path: "/dashboard/properties" });
+    }
   },
 };
 </script>

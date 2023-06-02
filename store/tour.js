@@ -190,16 +190,26 @@ export const actions = {
   },
   async fetchTour({ commit }, id) {
     commit("SET_LOADING", true);
+    commit("SET_HOTSPOTS", []);
     try {
+      const token = localStorage.getItem('token');
       const res = await fetch(
-        `http://192.168.50.207:8000/api/v1/properties/${id}/virtual_tour/`
+        `${this.$config.baseUrl}/properties/${id}/virtual_tour/`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Token ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
       );
       const data = await res.json();
 
       // Check if the response status is OK
       if (res.ok) {
-        const { hotspotNodes } = data;
+        const { hotspotNodes, defaultViewPostion, initialView  } = data;
         commit("SET_HOTSPOTS", hotspotNodes);
+        commit("SET_VIEW_POSTION", defaultViewPostion);
+        commit("SET_INITIAL_VIEW", initialView);
       } else {
         throw new Error(data.message || "Failed to get tour data");
       }
@@ -212,8 +222,9 @@ export const actions = {
   async postTour({ commit }, { data, id }) {
     commit("SET_LOADING", true);
     try {
-      const URL = `http://192.168.50.207:8000/api/v1/properties/${id}/virtual_tour/`
-      const P_URL = `http://localhost:3000/tour/view/${id}`
+      const URL = `${this.$config.baseUrl}/properties/${id}/virtual_tour/`
+      const P_URL = `${this.$config.localUrl}/tour/view/${id}`
+      const token = localStorage.getItem('token');
       const resp = await axios.post(
         URL,
         data,
@@ -224,6 +235,10 @@ export const actions = {
               (progressEvent.loaded * 100) / progressEvent.total
             );
             commit('UPDATE_PROGRESS', percentCompleted)
+          },
+          headers: {
+            'Authorization': `Token ${token}`,
+            'Content-Type': 'application/json',
           }
         }
       );
@@ -232,6 +247,7 @@ export const actions = {
       commit('UPDATE_PUBLISH_URL', P_URL)
       console.log(res)
     } catch (error) {
+      commit('UPDATE_PROGRESS', 0)
       commit("UPDATE_PUBLISH_STATUS", false)
       commit('UPDATE_PUBLISH_URL', '')
       console.error("An error occurred:", error.message);

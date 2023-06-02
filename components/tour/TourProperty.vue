@@ -1,25 +1,25 @@
 <template>
-  <div class="card text-dark mb-4 p-1">
-    <div class="card-header text-white bg-transparent mb-1 border border-0">
+  <div class="card bg-light border border-0 mb-4 py-2 px-2 shadow-sm">
+    <div class="card-header bg-success mb-1 border border-0">
       Tour Properties
     </div>
-    <ul class="list-group list-group-flush shadow-sm">
+    <ul class="list-group list-group-flush">
       <div
         v-for="tourProperty in tourProperties"
         :key="tourProperty.name"
-        class="list-group-item rounded-4 mb-2"
+        class="list-group-item mt-2 p-0 border border-0"
       >
         <div class="input-group">
           <input
             type="text"
-            class="form-control border border-0 bg-white"
+            class="form-control"
             :aria-label="tourProperty.name"
             :disabled="tourProperty.disabled"
             :placeholder="tourProperty.placeholder"
             :value="tourProperty.value"
             @input="updatePropertyValue(tourProperty.name, $event.target.value)"
           />
-          <span class="input-group-text border border-0 bg-white"
+          <span class="input-group-text border border-0"
             ><i
               :class="[
                 'mdi mdi-24px',

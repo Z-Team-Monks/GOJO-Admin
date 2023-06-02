@@ -1,5 +1,5 @@
 <template>
-  <div class="tour-view" style="position: relative; width: 100%; height: 80vh">
+  <div id="tour-view" style="position: relative; width: 100%; height: 80vh">
     <div
       id="viewer"
       ref="viewRef"
@@ -96,6 +96,7 @@
       </b-modal>
       <b-modal
         v-model="showPublish"
+        id="modal-center"
         centered
         title="Publish Tour"
         hide-footer
@@ -162,7 +163,6 @@ export default {
   props: {
     propertyId: {
       type: String,
-      required: true,
     },
   },
   components: {
@@ -415,7 +415,7 @@ export default {
     async handleMarkerDelete(markerId) {
       this.deleteNode(markerId);
       this.markerPlugin.removeMarker(markerId);
-      this.tourPlugin.setNodes(this.hotspotNodes, this.hotspotNodes[0].id);
+      this.tourPlugin.setCurrentNode(this.currentView);
       this.showSuccess("Marker deleted!");
     },
     viewMode() {
@@ -523,16 +523,16 @@ export default {
 </script>
 
 <style>
-.crosshair div {
+#tour-view .crosshair div {
   cursor: crosshair !important;
 }
 .loose-button {
   opacity: 75%;
 }
-.image-height {
+#tour-view .image-height {
   height: 30%;
 }
-.canvas-view {
+#tour-view .canvas-view {
   position: absolute;
   width: 100%;
   height: 100%;
