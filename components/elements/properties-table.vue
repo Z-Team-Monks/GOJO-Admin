@@ -44,7 +44,8 @@
             
             </td> -->
             
-            <td>{{ property.location.street }}</td>
+            <td v-if="property.location">{{ property.location.street }}</td>
+            <td v-else>Not set</td>
             <!-- <td>
                 <span v-if="properties.visiting_hours.length != 0">Yes</span>
                 <span v-else>No</span>
@@ -70,6 +71,9 @@
             
             <td>
               <button class="btn btn-link" @click="showM(property)"><i class="mdi mdi-dots-vertical"></i></button>
+            </td>
+            <td>
+              <button class="btn btn-text" @click="vr(property.id)">Create VR</button>
             </td>
           </tr>
         </tbody>
@@ -195,6 +199,9 @@ import propertiesModal from '../elements/properties-modal.vue';
       },
     },
     methods: {
+      vr(id){
+        this.$router.push({path:'/tour/create/', params: { id: id }})
+      },
       showM(properties) {
         this.showModal = true
         this.property = properties

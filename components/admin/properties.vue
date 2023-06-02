@@ -45,7 +45,7 @@
   
     data() {
       return {
-        columns: ["Owner","Title","Category", "Location", "Amount", "Rating", "Status", "Action"],
+        columns: ["Owner","Title","Category", "Location", "Amount", "Rating", "Status", "Action", "VR"],
 
         cardContent: [
           {

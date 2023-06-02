@@ -20,8 +20,8 @@
           <div class="tab-content p-3">
             <div class="tab-pane fade show active" id="all">
               <div v-if="loading">Loading...</div>
-      <div v-else-if="transactions.length === 0">No transaction records</div>
-              <Table :transaction="transaction" :columns="columns" />
+      <div v-else-if="getTransactions.length === 0">No transaction records</div>
+              <Table :transactions="getTransactions" :columns="columns" />
             </div>
           </div>
         </div>
@@ -56,7 +56,7 @@ export default {
 
   data() {
     return {
-      columns: ["Name", "Home Status", "Location", "Payment Status", "Amount"],
+      columns: ["Property", "Payment Date", "Amount", "Payment Status", "Action"],
       // transaction: [
       //   {
       //     id: "1",
@@ -178,15 +178,15 @@ export default {
   },
   computed: {
     // Map the 'transactions' getter from the 'transaction' Vuex module
-    ...mapGetters('transaction', ['transactions','loading']),
+    ...mapGetters('transaction', ['getTransactions','loading']),
   },
   methods: {
     // Map the 'getTransactions' action from the 'transaction' Vuex module
-    ...mapActions('transaction', ['getTransactions']),
+    ...mapActions('transaction', ['fetchTransactions']),
   },
   created() {
     // Fetch transactions when the component is created
-    this.getTransactions();
+    this.fetchTransactions();
   },
 };
 </script>

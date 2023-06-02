@@ -154,7 +154,7 @@
                         </div>
                         <div class="col-6 mb-5">
                           <input
-                          v-if="currentUser.user != undefined"
+                          v-if="currentUser != undefined"
                             class="form-control-plaintext"
                             :readonly="!isEditing"
                             :class="{
@@ -162,7 +162,7 @@
                               'editable-field': isEditing,
                             }"
                             style="font-weight: 700"
-                            :value="currentUser.user.first_name"
+                            :value="currentUser.first_name"
                           />
                         </div>
                         <div class="col-6 mb-5 text-center">
@@ -170,7 +170,7 @@
                         </div>
                         <div class="col-6 mb-5">
                           <input
-                          v-if="currentUser.user != undefined"
+                          v-if="currentUser != undefined"
                             class="form-control-plaintext"
                             :readonly="!isEditing"
                             :class="{
@@ -178,7 +178,7 @@
                               'editable-field': isEditing,
                             }"
                             style="font-weight: 700"
-                            :value="currentUser.user.last_name"
+                            :value="currentUser.last_name"
                           />
                         </div>
                         <div class="col-6 mb-5 text-center">
@@ -186,7 +186,7 @@
                         </div>
                         <div class="col-6 mb-5">
                           <input
-                          v-if="currentUser.user != undefined"
+                          v-if="currentUser != undefined"
                             class="form-control-plaintext"
                             :readonly="!isEditing"
                             :class="{
@@ -194,7 +194,7 @@
                               'editable-field': isEditing,
                             }"
                             style="font-weight: 700"
-                            :value="currentUser.user.first_name"
+                            :value="currentUser.first_name"
                           />
                         </div>
                         <div class="col-6 mb-5 text-center">
@@ -202,7 +202,7 @@
                         </div>
                         <div class="col-6 mb-5">
                           <input
-                          v-if="currentUser.user != undefined"
+                          v-if="currentUser != undefined"
                             class="form-control-plaintext"
                             :readonly="!isEditing"
                             :class="{
@@ -210,7 +210,7 @@
                               'editable-field': isEditing,
                             }"
                             style="font-weight: 700"
-                            :value="currentUser.user.phone"
+                            :value="currentUser.phone"
                           />
                         </div>
                       </div>
@@ -223,7 +223,7 @@
                         <div class="col-6 mb-5">
                           <input
                             class="form-control-plaintext"
-                            v-if="currentUser.user != undefined"
+                            v-if="currentUser != undefined"
                             :readonly="!isEditing"
                             :class="{
                               'readonly-field': !isEditing,
@@ -239,7 +239,7 @@
                         <div class="col-6 mb-5">
                           <input
                             :readonly="!isEditing"
-                            v-if="currentUser.user != undefined"
+                            v-if="currentUser != undefined"
                             :class="{
                               'readonly-field': !isEditing,
                               'editable-field': isEditing,
@@ -255,14 +255,14 @@
                         <div class="col-6 mb-5">
                           <input
                             :readonly="!isEditing"
-                            v-if="currentUser.user != undefined"
+                            v-if="currentUser != undefined"
                             :class="{
                               'readonly-field': !isEditing,
                               'editable-field': isEditing,
                             }"
                             class="form-control-plaintext"
                             style="font-weight: 700"
-                            :value="currentUser.user.is_active"
+                            :value="currentUser.is_active"
                           />
                         </div>
                         <div class="col-6 text-center">
@@ -271,14 +271,14 @@
                         <div class="col-6">
                           <input
                             :readonly="!isEditing"
-                            v-if="currentUser.user != undefined"
+                            v-if="currentUser != undefined"
                             :class="{
                               'readonly-field': !isEditing,
                               'editable-field': isEditing,
                             }"
                             class="form-control-plaintext"
                             style="font-weight: 700"
-                            :value="currentUser.user.role"
+                            :value="currentUser.role"
                           />
                         </div>
                       </div>
@@ -352,13 +352,13 @@ export default {
     };
   },
   mounted() {
-        this.fetchCurrentUser();
+        this.currentUser;
     },
     computed: {
       ...mapGetters('auth', ['currentUser', 'getSuccess', 'getError']),
     },
   methods: {
-    ...mapActions('auth', ['fetchCurrentUser']),
+    // ...mapActions('auth', ['fetchCurrentUser']),
     toggleDropdown() {
       this.dropdownOpen = !this.dropdownOpen;
     },

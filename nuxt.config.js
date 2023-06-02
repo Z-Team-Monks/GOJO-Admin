@@ -32,7 +32,7 @@ export default {
     {src: '~/plugins/persistedState.client.js',ssr: false},
     '~/plugins/route.js'
   ],
-
+  ssr: false,
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
 
@@ -52,6 +52,9 @@ export default {
     '@nuxtjs/axios',
     'bootstrap-vue/nuxt'
   ],
+  router: {
+    middleware: 'auth'
+  },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
@@ -63,4 +66,5 @@ export default {
     baseUrl: process.env.BASE_URL || 'http://34.163.240.198/api/v1',
   },
   privateRuntimeConfig: {}
+ 
 }

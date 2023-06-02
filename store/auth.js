@@ -1,7 +1,7 @@
 export const state = () => ({
     error: null,
     token: null,
-    user: null,
+    users: null,
     loading: false,
     updateError: null,
     updateSuccess: false,
@@ -17,7 +17,7 @@ export const state = () => ({
 
   export const getters = {
     isAuthenticated: (state) => !!state.token,
-    currentUser0: (state) => state.user,
+    getUsers: (state) => state.users,
     getUpdateError: state => state.updateError,
     getUpdateSuccess: state => state.updateSuccess,
     getDeleteSuccess: (state) => state.deleteSuccess,
@@ -35,18 +35,17 @@ export const state = () => ({
     },
     setToken(state, token) {
       state.token = token
-      if(token) {
-        this.$router.push('/dashboard/home'); // Redirects to the dashboard after successful login
-      }
     },
     setUser(state, user) {
-      state.user = user
+      state.users = user
     },
     setLoading(state, isLoading) {
         state.loading = isLoading;
       },
     clearUser(state){
-        state.user = null
+        state.users = null
+        state.currentUser = null
+        state.token =  null
     },
     setUpdateError(state, error) {
       state.updateError = error;
@@ -74,6 +73,15 @@ export const state = () => ({
     },
     setCurrentUser(state, value) {
       state.currentUser = value;
+      if(value.role == 3) {
+        this.$router.push('/dashboard/transaction'); // Redirects to the dashboard after successful login
+      }
+      else if(value.role == 4){
+        this.$router.push('/dashboard/properties')
+      }
+      else if(value.role == 5){
+        this.$router.push('/dashboard/home')
+      }
     },
     setGetSuccess(state, value) {
       state.getSuccess = value;
@@ -84,7 +92,7 @@ export const state = () => ({
   }
 
   export const actions = {
-    async login({ commit, state }, { username, password}) {
+    async login({ commit, state, dispatch }, { username, password}) {
       try {
         const response = await fetch(`${this.$config.baseUrl}/users/admin_login/`, {
           method: 'POST',
@@ -106,11 +114,36 @@ export const state = () => ({
 
         const data = await response.json()
 
-        // Save the token in localStorage
-      localStorage.setItem('token', data.user.token);
-       console.log(data)
-
+      //   const url = `${state.baseUrl}/users/me/`;
+      //   const options = {
+      //     method: 'GET',
+      //     headers: {
+      //       'Authorization': `Token ${data.user.token}`,
+      //       'Content-Type': 'application/json',
+      //       // Include your authentication token here if necessary
+      //     },
+      //   };
+      //   try {
+      //     const response = await fetch(url, options);
+      //     if (!response.ok) {
+      //       throw new Error(`HTTP error! status: ${response.status}`);
+      //     }
+      //     const data = await response.json();
+      //     commit('setCurrentUser', data);
+      //     localStorage.setItem('user', JSON.stringify(data.user))
+      //     commit('setGetSuccess', true);
+      //     commit('setGetError', null);
+      //   } catch (error) {
+      //     commit('setGetSuccess', false);
+      //     commit('setGetError', error.message);
+      //   }
+        
+      //   // Save the token in localStorage
+      // localStorage.setItem('user', JSON.stringify(data.user));
+      //  console.log(data)
+      
         // You would usually save the token here
+        commit('setCurrentUser', data.user);
         commit('setToken', data.user.token)
 
         // You would usually save the user data here
@@ -126,7 +159,7 @@ export const state = () => ({
     async fetchUser({ commit, state }) {
         try {
             commit('setLoading', true);
-            const token = localStorage.getItem('token');
+            const token = state.token
             if (!token) {
               throw new Error('Token not found');
             }
@@ -156,11 +189,13 @@ export const state = () => ({
       },
 
       async logout({ commit ,state}) {
+        console.log('hello')
+        console.log(state.baseUrl)
         try {
           // Fetch user information from the '/user/me/' endpoint
           const response = await fetch(`${this.$config.baseUrl}/users/me/`, {
             headers: {
-              'Authorization': `Token ${localStorage.getItem('token')}`
+              'Authorization': `Token ${state.token}`
             },
           });
 
@@ -185,7 +220,7 @@ export const state = () => ({
           const logoutResponse = await fetch(`${this.$config.baseUrl}/users/logout/`, {
             method: 'POST',
             headers: {
-                'Authorization': `Token ${localStorage.getItem('token')}`,
+                'Authorization': `Token ${state.token}`,
               'Content-Type': 'application/json',
             },
             body: JSON.stringify(data),
@@ -198,11 +233,11 @@ export const state = () => ({
           }
 
           // Clear the token from local storage
-          localStorage.removeItem('token');
-
+          // localStorage.removeItem('token');
+          
           // Commit the mutation to clear the user data
           commit('clearUser');
-
+          console.log(state.token)
           // Redirect to the homepage
           // Replace '/homepage' with the actual route to your homepage
           this.$router.push('/');
@@ -212,7 +247,7 @@ export const state = () => ({
       },
       async createUser({ commit, dispatch,state }, user) {
 
-        const token = localStorage.getItem('token');
+        const token = state.token;
         if (!token) {
           throw new Error('Token not found');
         }
@@ -240,7 +275,7 @@ export const state = () => ({
         }
       },
       updateUser({ commit, dispatch,state }, userData) {
-        const token = localStorage.getItem('token');
+        const token = state.token;
             if (!token) {
               throw new Error('Token not found');
             }
@@ -263,7 +298,7 @@ export const state = () => ({
           .then((json) => {
             commit('setUser', json);
             dispatch('fetchUser')
-            dispatch('fetchCurrentUser')
+            
             commit('setUpdateSuccess', true);
             commit('setUpdateError', null);
           })
@@ -273,7 +308,7 @@ export const state = () => ({
           });
       },
       async deleteUser({ commit, dispatch,state }, userId) {
-        const token = localStorage.getItem('token');
+        const token = state.token;
             if (!token) {
               throw new Error('Token not found');
             }
@@ -299,32 +334,33 @@ export const state = () => ({
           commit('setDeleteError', error.message);
         }
       },
-      async fetchCurrentUser({ commit, state }) {
-        const token = localStorage.getItem('token');
-            if (!token) {
-              throw new Error('Token not found');
-            }
-        const url = `${this.$config.baseUrl}/users/me/`;
-        const options = {
-          method: 'GET',
-          headers: {
-            'Authorization': `Token ${token}`,
-            'Content-Type': 'application/json',
-            // Include your authentication token here if necessary
-          },
-        };
-        try {
-          const response = await fetch(url, options);
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-          const data = await response.json();
-          commit('setCurrentUser', data);
-          commit('setGetSuccess', true);
-          commit('setGetError', null);
-        } catch (error) {
-          commit('setGetSuccess', false);
-          commit('setGetError', error.message);
-        }
-      },
+      // async fetchCurrentUser({ commit, state }) {
+      //   return new Promise(async (resolve, reject) => {
+      //       const token = state.token;
+      //       if (!token) {
+      //           reject('Token not found');
+      //       }
+      //   const url = `${this.$config.baseUrl}/users/me/`;
+      //   const options = {
+      //     method: 'GET',
+      //     headers: {
+      //       'Authorization': `Token ${token}`,
+      //       'Content-Type': 'application/json',
+      //       // Include your authentication token here if necessary
+      //     },
+      //   };
+      //   try {
+      //     const response = await fetch(url, options);
+      //     if (!response.ok) {
+      //       throw new Error(`HTTP error! status: ${response.status}`);
+      //     }
+      //     const data = await response.json();
+      //     commit('setCurrentUser', data);
+      //     commit('setGetSuccess', true);
+      //     commit('setGetError', null);
+      //   } catch (error) {
+      //     commit('setGetSuccess', false);
+      //     commit('setGetError', error.message);
+      //   }
+      // })}
   }

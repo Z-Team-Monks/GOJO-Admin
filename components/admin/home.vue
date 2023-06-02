@@ -7,7 +7,7 @@
         <div class="col-sm-4" v-for="content in cardContent" :key="content.id">
           <card :content="content" />
         </div>
-        <div class="col-12">
+        <div class="col-12 mt-5">
           <div class="row border-bottom justify-content-between">
             <div class="col-sm-8">
               <tabs class="nav-pills nav-fill" :data="tabsData"></tabs>
@@ -154,10 +154,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters("auth", ["isAuthenticated", "currentUser0"]),
+    ...mapGetters("auth", ["isAuthenticated", "getUsers"]),
     userList: {
       get() {
-        return this.currentUser0;
+        return this.getUsers;
       },
       set(value) {
         // You can handle the setter logic if required
@@ -170,11 +170,11 @@ export default {
   methods: {
     ...mapActions("auth", ["fetchUser"]),
     fetchUserData() {
-      if (localStorage && localStorage.getItem("token")) {
+      if (this.isAuthenticated) {
         this.fetchUser()
           .then(() => {
             // Assign the fetched user data to userList
-            this.userList = this.$store.state.auth.user;
+            this.userList = this.$store.state.auth.users;
             console.log("User data fetched successfully");
           })
           .catch((error) => {

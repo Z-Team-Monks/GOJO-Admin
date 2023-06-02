@@ -18,7 +18,7 @@ export const state = () => ({
     async fetchProperties({ commit }) {
       commit('SET_LOADING', true);
       try {
-        const res = await fetch('http://192.168.50.207:8000/api/v1/properties/');
+        const res = await fetch('http://34.163.240.198/api/v1/properties/');
         const data = await res.json();
   
         // Check if the response status is OK

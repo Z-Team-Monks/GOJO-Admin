@@ -1,6 +1,6 @@
 <template>
   <div>
-    <table classs="table">
+    <table classs="table" v-if="Object.keys(transactions).length !== 0">
       <thead>
         <tr>
           <th align="left">
@@ -11,11 +11,11 @@
               {{ column }}
             </span>
           </th>
-          <th><i class="mdi mdi-dots-vertical"></i></th>
         </tr>
       </thead>
+      <!-- {{ transactions.results }} -->
       <tbody>
-        <tr v-for="transaction in transaction" :key="transaction.id">
+        <tr v-for="transaction in localTransactions.results" :key="transaction.id">
           <td style="width: 3%">
             <input
               type="checkbox"
@@ -25,34 +25,39 @@
             />
           </td>
           <td>
-            <img
-              src="https://cdn-icons-png.flaticon.com/512/219/219988.png"
-              class="mr-2"
-              width="40"
-              alt=""
-            />
-            {{ transaction.name }}
+            
+            {{ transaction.property_title }}
           </td>
-          <td>
-            <span class="active-stat"
-              ><i class="mdi mdi-circle"></i> {{ transaction.homeStatus }}</span
-            >
-          </td>
-          <td>{{ transaction.location }}</td>
-          <td v-if="transaction.paymentStatus == 'Approved'">
-            <div class="active-stat text-center">
-              {{ transaction.paymentStatus }}
-            </div>
-          </td>
-          <td v-if="transaction.paymentStatus == 'Rejected'">
-            <div class="deactive-stat text-center">
-              {{ transaction.paymentStatus }}
-            </div>
-          </td>
+          
+          <td>{{ transaction.payment_date }}</td>
           <td>
             {{ transaction.amount }}
           </td>
-          <td><i class="mdi mdi-dots-vertical"></i></td>
+          <td>
+           
+             {{ transaction.status}}
+           
+          </td>
+          <td>
+            <!-- <div class="row justify-content-end">
+          <div class="col-auto">
+            <b-button variant="danger" class="btn-labeled">
+              <span class="btn-label"><i class="mdi mdi-close"></i></span>Decline
+            </b-button>
+          </div>
+          <div class="col-auto">
+            <b-button variant="success" class="btn-labeled">
+              <span class="btn-label"><i class="mdi mdi-check"></i></span>Approve
+            </b-button>
+          </div>
+        </div> -->
+        <b-form-select v-model="selectedOption" @change="onChange(transaction)">
+      <b-form-select-option :value="null">Please select...</b-form-select-option>
+      <b-form-select-option v-for="option in options" :key="option.value" :value="option.value">
+        {{ option.text }}
+      </b-form-select-option>
+    </b-form-select>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -93,6 +98,7 @@
           v-for="option in [5, 10, 20, 50, 100]"
           :key="option"
           :value="option"
+          :title="option.stat"
         >
           {{ option }}
         </option>
@@ -103,10 +109,12 @@
 </template>
     
     <script>
+    import { mapActions } from 'vuex';
 export default {
   props: {
-    transaction: {
-      Type: Object,
+    transactions: {
+      Type: Array,
+      default: () => [],
     },
     columns: {
       Type: Object,
@@ -118,38 +126,54 @@ export default {
       reverse: false,
       currentPage: 1,
       rowsPerPage: 10,
+      selectedOption:'',
+      status:1,
       search: "",
       selected: [],
+      localTransactions: this.transactions,
+      options: [
+        { value: 1, text: 'Withdraw Pending' },
+        { value: 3, text: 'Approved' },
+        { value: 2, text: 'Declined' }
+      ]
     };
   },
+  // watch: {
+  //   transactions: {
+  //     handler(newValue) {
+  //       this.localTransactions = newValue
+  //     },
+  //     immediate: true,
+  //   },
+  // },
   computed: {
     pageDisplay() {
       const start = (this.currentPage - 1) * this.rowsPerPage + 1;
       const end = Math.min(
         this.currentPage * this.rowsPerPage,
-        this.transaction.length
+        this.transactions.count
       );
-      return `${start}-${end} of ${this.transaction.length}`;
+      return `${start}-${end} of ${this.transactions.count}`;
     },
     paginatedUsers() {
       const start = (this.currentPage - 1) * this.rowsPerPage;
       const end = start + this.rowsPerPage;
-      return this.transaction.slice(start, end);
+      return this.transactions.results.slice(start, end);
     },
     totalPages() {
-      return Math.ceil(this.transaction.length / this.rowsPerPage);
+      return Math.ceil(this.transactions.count / this.rowsPerPage);
     },
     selectAll: {
       get: function () {
-        return this.transaction
-          ? this.selected.length == this.transaction.length
+        return this.transactions
+          ? this.selected.length == this.transactions.count
           : false;
       },
       set: function (value) {
         var selected = [];
 
         if (value) {
-          this.transaction.forEach(function (user) {
+          this.transactions.forEach(function (user) {
             selected.push(user.id);
           });
         }
@@ -158,7 +182,7 @@ export default {
       },
     },
     orderedUsers: function () {
-      return this.transaction, this.sortKey, this.reverse ? "asc" : "desc";
+      return this.transactions, this.sortKey, this.reverse ? "asc" : "desc";
     },
   },
   filters: {
@@ -169,6 +193,11 @@ export default {
     },
   },
   methods: {
+    ...mapActions('transaction', ['patchTransaction']),
+
+    onChange(transaction) {
+      this.patchTransaction({ id: transaction.id, transactionData: { status: this.selectedOption } });
+    },
     setCurrentPage(page) {
       this.currentPage = page;
     },

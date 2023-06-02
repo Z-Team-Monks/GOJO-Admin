@@ -26,7 +26,7 @@
         title="Select Tour"
         hide-footer
         hide-header
-        :class="'modal-content'"
+        
       >
         <div class="p-3 w-100 modal-body">
           <div
@@ -543,7 +543,7 @@ export default {
   align-items: center;
 }
 #modal-center .modal-content {
-  width: 1000px;
+  width: 1200px;
   background-color: transparent;
 }
 #modal-center .modal-body {
