@@ -94,7 +94,7 @@ export const state = () => ({
   export const actions = {
     async login({ commit, state, dispatch }, { username, password}) {
       try {
-        const response = await fetch(`${this.$config.baseUrl}/users/admin_login/`, {
+        const response = await fetch(`http://34.163.240.198/api/v1/users/admin_login/`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -137,11 +137,11 @@ export const state = () => ({
       //     commit('setGetSuccess', false);
       //     commit('setGetError', error.message);
       //   }
-        
+
       //   // Save the token in localStorage
       // localStorage.setItem('user', JSON.stringify(data.user));
       //  console.log(data)
-      
+
         // You would usually save the token here
         commit('setCurrentUser', data.user);
         commit('setToken', data.user.token)
@@ -234,7 +234,7 @@ export const state = () => ({
 
           // Clear the token from local storage
           // localStorage.removeItem('token');
-          
+
           // Commit the mutation to clear the user data
           commit('clearUser');
           console.log(state.token)
@@ -298,7 +298,7 @@ export const state = () => ({
           .then((json) => {
             commit('setUser', json);
             dispatch('fetchUser')
-            
+
             commit('setUpdateSuccess', true);
             commit('setUpdateError', null);
           })

@@ -61,7 +61,6 @@
                   @click="setFeaturedImage1(image)"
                 >
                   <img :src="image" alt="Thumbnail Image" />
-                  
                 </div>
               </div>
             </div>
@@ -81,32 +80,16 @@
                 />
               </label>
             </div>
-            
           </div>
         </div>
 
         <div class="col-sm-12" v-if="modalData != null">
           <hr />
           <p>
-            If you want a great seafront location, Villa Dionysos is the ideal
-            choice! Its location secures fantastic panoramic sea views, and
-            you'll even have your own private access to the small pebble beach
-            at the end of the garden. And not only that, this fantastic 3
-            bedroom house also has a large private swimming pool and lawn. The
-            main beach and facilities of Sidari are all within a short drive.
-            Pool heating, WiFi and air conditioning/heating in the bedrooms are
-            included. Welcome to your new holiday home, situated in the north of
-            Corfu island near the village Agios Ioannis Karousadon. This house
-            will give you all the amenities and peacefulness you deserve, from a
-            private swimming pool to a private beach. This 3 bedroom house is
-            perfect for a family/friend and also couples holiday unwind near the
-            pool, enjoy the summer night with a barbecue dinner and relax
-            staring the stars and most of all feel your Greek holidays with this
-            typical Greek house situated near countless small beaches, bars and
-            restaurants. Book your holidays now before it’s too late!
+            {{ modalData.description }}
           </p>
           <!-- <div v-if="modalData.owner != undefined">
-            
+
             <Strong>Owner: </Strong>Name: {{ modalData.owner.first_name }}
             {{ modalData.owner.last_name }} <br />
             Phone: {{ modalData.owner.phone }} <br />
@@ -152,7 +135,11 @@
             </b-button>
           </div>
           <div class="col-auto">
-            <b-button variant="success" class="btn-labeled">
+            <b-button
+              @click="saveChanges"
+              variant="success"
+              class="btn-labeled"
+            >
               <span class="btn-label"><i class="mdi mdi-check"></i></span>Save
             </b-button>
           </div>
@@ -161,9 +148,9 @@
     </b-modal>
   </div>
 </template>
-  
-  <script>
-//   import { mapGetters, mapActions } from "vuex";
+
+<script>
+import { mapGetters, mapActions } from "vuex";
 export default {
   props: {
     showModal: {
@@ -171,17 +158,17 @@ export default {
       required: true,
     },
     modalData: {
-      type: Array,
+      type: Object,
+      required: true,
     },
   },
   data() {
     return {
       localShowModal: false,
       localModalData: {},
-      featuredImage2:'https://www.shutterstock.com/image-vector/upload-icon-vector-illustration-on-260nw-1909181089.jpg',
-      images: [
-        'https://www.shutterstock.com/image-vector/upload-icon-vector-illustration-on-260nw-1909181089.jpg'
-      ],
+      featuredImage2:
+        "https://www.shutterstock.com/image-vector/upload-icon-vector-illustration-on-260nw-1909181089.jpg",
+      images: [],
       maxLength: 20,
       nameState: true,
       name: "",
@@ -223,21 +210,21 @@ export default {
   },
 
   methods: {
+    ...mapActions("properties", ["postProperty"]),
     handleFiles(event) {
       const files = Array.from(event.target.files);
+      this.files = files;
       files.forEach((file) => {
-        if (this.images.length < this.maxLength && file.type.match("image.*")) {
-          const reader = new FileReader();
-          reader.onload = (e) => this.images.push(e.target.result);
-          reader.readAsDataURL(file);
-        }
+        const reader = new FileReader();
+        reader.onload = (e) => this.images.push(e.target.result);
+        reader.readAsDataURL(file);
       });
     },
     setFeaturedImage(image) {
       this.featuredImage = image;
     },
-    setFeaturedImage1(image){
-        this.featuredImage2 = image
+    setFeaturedImage1(image) {
+      this.featuredImage2 = image;
     },
     removeImage(index) {
       this.images.splice(index, 1);
@@ -254,13 +241,15 @@ export default {
       this.$emit("cancel");
     },
     saveChanges() {
-      // Save changes logic
-      // ...
+      const formData = new FormData();
+      this.files.forEach((img, idx) => {
+        formData.append(`image-${idx}`, img);
+      });
+      this.postProperty({ data: formData, id: this.modalData.id });
       this.$emit("save");
     },
   },
 };
 </script>
 
-  <style lang="sass" scoped>
-</style>
+<style lang="sass" scoped></style>
