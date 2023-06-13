@@ -32,8 +32,7 @@
               </div>
               
               <div class="field">
-                <input class="btn-login" type="submit" :class="{ 'btn-loading': loading }" :disabled="loading" :value="loading ? '' : 'Login'" />
-                <i v-if="loading" class="mdi mdi-spin"></i>
+                <input class="btn-login" type="submit" :class="{ 'btn-loading': loading }" :disabled="loading" :value="loading ? 'Authenticating...' : 'Login'" />
               </div>
             </form>
           </div>
@@ -44,7 +43,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 
 export default {
   name: "Login",
@@ -54,6 +53,8 @@ export default {
       password: '',
       loading: false,
       passwordFieldType: 'password',
+      
+      
     };
   },
   methods: {
@@ -71,16 +72,18 @@ export default {
           password: this.password,
           
         });
-        // Redirect or do something else based on successful login
       } catch (error) {
-        console.error('Failed to login:', error);
-        // Handle the error
+       
+        console.log(this.erroM)
       }finally {
         this.loading = false;
       }
     },
   },
+  computed:{
+    //computed
+  }
 };
 </script>
 
-<style lang="scss" scoped></style>
+

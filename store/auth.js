@@ -1,11 +1,13 @@
 export const state = () => ({
     error: null,
+    successMessage:null,
     token: null,
     users: null,
     loading: false,
     updateError: null,
-    updateSuccess: false,
+    updateSuccess: null,
     deleteError: null,
+    updateLoading: false,
     deleteSuccess: false,
     postError: null,
     postSuccess: false,
@@ -26,12 +28,15 @@ export const state = () => ({
     getPostError: (state) => state.postError,
     currentUser: (state) => state.currentUser,
     getSuccess: (state) => state.getSuccess,
-    getError: (state) => state.getError,
+    getErrorMessage: (state) => state.error,
   };
 
   export const mutations = {
     setError(state, error) {
       state.error = error
+    },
+    setSuccessMessage(state, message) {
+      state.successMessage = message
     },
     setToken(state, token) {
       state.token = token
@@ -89,10 +94,13 @@ export const state = () => ({
     setGetError(state, value) {
       state.getError = value;
     },
+    setUpdateLoading(state, value) {
+      state.updateLoading = value;
+    },
   }
 
   export const actions = {
-    async login({ commit, state, dispatch }, { username, password}) {
+    async login({ commit}, { username, password}) {
       try {
         const response = await fetch(`http://34.163.240.198/api/v1/users/admin_login/`, {
           method: 'POST',
@@ -114,34 +122,8 @@ export const state = () => ({
 
         const data = await response.json()
 
-      //   const url = `${state.baseUrl}/users/me/`;
-      //   const options = {
-      //     method: 'GET',
-      //     headers: {
-      //       'Authorization': `Token ${data.user.token}`,
-      //       'Content-Type': 'application/json',
-      //       // Include your authentication token here if necessary
-      //     },
-      //   };
-      //   try {
-      //     const response = await fetch(url, options);
-      //     if (!response.ok) {
-      //       throw new Error(`HTTP error! status: ${response.status}`);
-      //     }
-      //     const data = await response.json();
-      //     commit('setCurrentUser', data);
-      //     localStorage.setItem('user', JSON.stringify(data.user))
-      //     commit('setGetSuccess', true);
-      //     commit('setGetError', null);
-      //   } catch (error) {
-      //     commit('setGetSuccess', false);
-      //     commit('setGetError', error.message);
-      //   }
-
-      //   // Save the token in localStorage
-      // localStorage.setItem('user', JSON.stringify(data.user));
-      //  console.log(data)
-
+      
+      
         // You would usually save the token here
         commit('setCurrentUser', data.user);
         commit('setToken', data.user.token)
@@ -149,11 +131,12 @@ export const state = () => ({
         // You would usually save the user data here
         commit('setUser', data.user)
 
-        // Reset the error
+        commit('setSuccessMessage', 'Success: Login was successful')
         commit('setError', null)
       } catch (error) {
-        // Handle error
-        commit('setError', error.message)
+        console.log(error)
+        commit('setError', error)
+        commit('setSuccessMessage', null)
       }
     },
     async fetchUser({ commit, state }) {
@@ -189,8 +172,7 @@ export const state = () => ({
       },
 
       async logout({ commit ,state}) {
-        console.log('hello')
-        console.log(state.baseUrl)
+      
         try {
           // Fetch user information from the '/user/me/' endpoint
           const response = await fetch(`${this.$config.baseUrl}/users/me/`, {
@@ -232,12 +214,10 @@ export const state = () => ({
             throw error;
           }
 
-          // Clear the token from local storage
-          // localStorage.removeItem('token');
-
+      
+          
           // Commit the mutation to clear the user data
           commit('clearUser');
-          console.log(state.token)
           // Redirect to the homepage
           // Replace '/homepage' with the actual route to your homepage
           this.$router.push('/');
@@ -279,6 +259,7 @@ export const state = () => ({
             if (!token) {
               throw new Error('Token not found');
             }
+            commit('setUpdateLoading', true);  // Start the loading state
         const url = `${this.$config.baseUrl}/users/${userData.id}/`;
         const options = {
           method: 'PATCH',
@@ -297,14 +278,18 @@ export const state = () => ({
           })
           .then((json) => {
             commit('setUser', json);
+            commit('setCurrentUser', json);
             dispatch('fetchUser')
-
-            commit('setUpdateSuccess', true);
+            
+            commit('setUpdateSuccess', 'Success: Update was successful');
             commit('setUpdateError', null);
           })
           .catch((error) => {
-            commit('setUpdateSuccess', false);
-            commit('setUpdateError', error.message);
+            
+            commit('setUpdateError', error);
+            commit('setUpdateSuccess', null);
+          }).finally(() => {
+            commit('setUpdateLoading', false);  // End the loading state
           });
       },
       async deleteUser({ commit, dispatch,state }, userId) {

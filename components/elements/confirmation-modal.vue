@@ -1,7 +1,7 @@
 <template>
     <div>
-        <b-modal v-model="showDeleteModal" @hide="cancelDeleteModal" centered id="modal-delete" title="Delete User" hide-footer button-size="sm">
-            <p>Are you sure you want to delete this user?</p>
+        <b-modal v-model="showDeleteModal" @hide="cancelDeleteModal" centered id="modal-delete" title="Change Status" hide-footer button-size="sm">
+            <p>Are you sure you want to {{ action }} this transaction?</p>
 
             <div class="row justify-content-end">
                 <div class="col-auto">
@@ -9,9 +9,14 @@
                         <span class="btn-label"><i class="mdi mdi-close"></i></span>Cancel
                     </b-button>
                 </div>
-                <div class="col-auto">
+                <div class="col-auto" v-if="action == 'approve'">
+                    <b-button variant="success" @click="deleteUserAndCloseModal" class="btn-labeled">
+                        <span class="btn-label"><i class="mdi mdi-check"></i></span>Approve
+                    </b-button>
+                </div>
+                <div class="col-auto" v-if="action == 'decline'">
                     <b-button variant="danger" @click="deleteUserAndCloseModal" class="btn-labeled">
-                        <span class="btn-label"><i class="mdi mdi-check"></i></span>Delete
+                        <span class="btn-label"><i class="mdi mdi-check"></i></span>Decline
                     </b-button>
                 </div>
             </div>
@@ -29,6 +34,9 @@ export default {
     },
     modalData: {
       type: Object
+    },
+    action:{
+      type: String
     }
   },
   data() {

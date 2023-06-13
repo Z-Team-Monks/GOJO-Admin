@@ -109,14 +109,9 @@
     <user-modal
       :show-modal="showModal"
       :modal-data="user"
-      :create-user="false"
       @cancel="cancelModal"
     ></user-modal>
-    <confirmation-modal
-      :show-delete-modal="showModal2"
-      :modal-data="user"
-      @cancel="cancelModal2"
-    ></confirmation-modal>
+   
     <nav aria-label="Page navigation nav-style" class="pagination-wrapper">
       <ul class="pagination">
         <li
@@ -166,10 +161,10 @@
   
   <script>
 import userModal from '../elements/user-modal.vue'
-import ConfirmationModal from './confirmation.modal.vue';
+
 
 export default {
-  components: {userModal, ConfirmationModal},
+  components: {userModal},
   props: {
     users: {
       Type: Array,
@@ -190,7 +185,6 @@ export default {
       rowsPerPage: 10,
       selected: [],
       showModal:false,
-      showModal2:false,
       user:[],
     };
   },
@@ -268,10 +262,6 @@ export default {
     },
     cancelModal(){
       this.showModal = false
-    },
-    showM2(user) {
-        this.showModal2 = true
-        this.user = user
     },
     cancelModal2(){
       this.showModal2 = false

@@ -5,13 +5,14 @@
     <main class="s-layout__content">
       <div class="row ml-5 mr-5 mt-2">
         <div class="profile-card mb-3 col-12">
-          <nav class="navbar navbar-light justify-content-between align-items-center">
-           <div><Strong> <h4 class="mt-2">User Profile</h4></Strong></div>
+          <nav
+            class="navbar navbar-light justify-content-between align-items-center"
+          >
             <div>
-              <i
-                class="mdi mdi-account-edit"
-                @click="showM(currentUser)"
-              ></i>
+              <Strong> <h4 class="mt-2">User Profile</h4></Strong>
+            </div>
+            <div>
+              <i class="mdi mdi-account-edit" @click="showM(currentUser)"></i>
 
               <i
                 class="mdi mdi-dots-vertical"
@@ -21,11 +22,11 @@
             </div>
           </nav>
           <user-modal
-      :show-modal="showModal"
-      :modal-data="user"
-      :create-user="false"
-      @cancel="cancelModal"
-    ></user-modal>
+            :show-modal="showModal"
+            :modal-data="user"
+            :create-user="false"
+            @cancel="cancelModal"
+          ></user-modal>
           <div class="profile-content">
             <div class="row align-items-center">
               <div class="col-sm-3 text-center">
@@ -51,15 +52,21 @@
                     alt="Avatar"
                   />
                 </div>
-                <div v-if="currentUser.user != undefined">
-                <h5 class="mt-4"><strong>{{currentUser.user.first_name}} {{ currentUser.user.last_name }}</strong></h5>
-                
-            
-            <span v-if="currentUser.user.role == 1">Tenant</span>
-          <span v-else-if="currentUser.user.role == 2">Landlord</span>
-          <span v-else-if="currentUser.user.role == 3">Financial Manager</span>
-          <span v-else-if="currentUser.user.role == 4">Listing Manager</span>
-          <span v-else>General Manager</span>
+                <div v-if="currentUser != undefined">
+                  <h5 class="mt-4">
+                    <strong
+                      >{{ currentUser.first_name }}
+                      {{ currentUser.last_name }}</strong
+                    >
+                  </h5>
+
+                  <span v-if="currentUser.role == 1">Tenant</span>
+                  <span v-else-if="currentUser.role == 2">Landlord</span>
+                  <span v-else-if="currentUser.role == 3"
+                    >Financial Manager</span
+                  >
+                  <span v-else-if="currentUser.role == 4">Listing Manager</span>
+                  <span v-else>General Manager</span>
                 </div>
 
                 <div>
@@ -154,7 +161,7 @@
                         </div>
                         <div class="col-6 mb-5">
                           <input
-                          v-if="currentUser != undefined"
+                            v-if="currentUser != undefined"
                             class="form-control-plaintext"
                             :readonly="!isEditing"
                             :class="{
@@ -170,7 +177,7 @@
                         </div>
                         <div class="col-6 mb-5">
                           <input
-                          v-if="currentUser != undefined"
+                            v-if="currentUser != undefined"
                             class="form-control-plaintext"
                             :readonly="!isEditing"
                             :class="{
@@ -186,7 +193,7 @@
                         </div>
                         <div class="col-6 mb-5">
                           <input
-                          v-if="currentUser != undefined"
+                            v-if="currentUser != undefined"
                             class="form-control-plaintext"
                             :readonly="!isEditing"
                             :class="{
@@ -202,7 +209,7 @@
                         </div>
                         <div class="col-6 mb-5">
                           <input
-                          v-if="currentUser != undefined"
+                            v-if="currentUser != undefined"
                             class="form-control-plaintext"
                             :readonly="!isEditing"
                             :class="{
@@ -309,8 +316,8 @@
 import navbar from "../elements/navbar.vue";
 import sidebar from "../elements/sidebar.vue";
 import card from "../elements/card.vue";
-import userModal from '../elements/user-modal.vue'
-import { mapGetters, mapActions } from 'vuex';
+import userModal from "../elements/user-modal.vue";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
   name: "profile",
@@ -319,9 +326,9 @@ export default {
     return {
       isEditing: false,
       dropdownOpen: false,
-      showModal:false,
+      showModal: false,
       name: "",
-      user:[],
+      user: [],
       nameState: true,
       currentUser1: {
         profilePic: "https://cdn-icons-png.flaticon.com/512/219/219988.png",
@@ -352,11 +359,11 @@ export default {
     };
   },
   mounted() {
-        this.currentUser;
-    },
-    computed: {
-      ...mapGetters('auth', ['currentUser', 'getSuccess', 'getError']),
-    },
+    this.currentUser;
+  },
+  computed: {
+    ...mapGetters("auth", ["currentUser", "getSuccess", "getError"]),
+  },
   methods: {
     // ...mapActions('auth', ['fetchCurrentUser']),
     toggleDropdown() {
@@ -377,11 +384,11 @@ export default {
       reader.readAsDataURL(file);
     },
     showM(user) {
-        this.showModal = true
-        this.user = user.user
+      this.showModal = true;
+      this.user = user;
     },
-    cancelModal(){
-      this.showModal = false
+    cancelModal() {
+      this.showModal = false;
     },
   },
 };

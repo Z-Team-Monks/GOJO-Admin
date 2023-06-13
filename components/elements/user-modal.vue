@@ -8,7 +8,7 @@
       :title="createUser == true ? 'Create User' : 'Edit User'"
       hide-footer
       button-size="sm"
-    >
+    > 
       <form ref="form" class="my-4">
         <b-form-group label="First Name" invalid-feedback="Name is required">
           <b-form-input
@@ -116,7 +116,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
+import { mapGetters, mapState } from "vuex";
 export default {
   props: {
     showModal: {
@@ -153,6 +153,9 @@ export default {
     showModal(value) {
       this.localShowModal = value;
     },
+    loading(newValue) {
+        this.$store.commit('auth/setUpdateLoading', newValue);
+    },
     modalData: {
       handler(newValue) {
         this.localModalData = { ...newValue }; // Makes a local copy of the prop
@@ -162,11 +165,19 @@ export default {
   },
   computed: {
     ...mapGetters(["getUpdateError", "getUpdateSuccess"]),
+    ...mapState('auth', {
+       
+        loading: state => state.updateLoading,
+        
+
+      }),
   },
   methods: {
     updateUser() {
       this.$store.dispatch("auth/updateUser", this.localModalData); // Use the local copy to update the user
-      this.$emit("cancel");
+      if(this.loading == true){
+        this.$emit("cancel");
+      }
     },
     createUserMethod() {
       this.$store.dispatch("auth/createUser", this.localModalData); // Use the local copy to update the user

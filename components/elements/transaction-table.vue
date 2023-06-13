@@ -39,29 +39,29 @@
            
           </td>
           <td>
-            <!-- <div class="row justify-content-end">
+            <div class="row">
           <div class="col-auto">
-            <b-button variant="danger" class="btn-labeled">
+            <b-button variant="danger" @click="showM2(transaction, 'decline')" class="btn-labeled">
               <span class="btn-label"><i class="mdi mdi-close"></i></span>Decline
             </b-button>
           </div>
           <div class="col-auto">
-            <b-button variant="success" class="btn-labeled">
-              <span class="btn-label"><i class="mdi mdi-check"></i></span>Approve
+            <b-button variant="success" class="btn-labeled" @click="showM2(transaction, 'approve')">
+              <span class="btn-label"><i class="mdi mdi-check" ></i></span>Approve
             </b-button>
           </div>
-        </div> -->
-        <b-form-select v-model="selectedOption" @change="onChange(transaction)">
-      <b-form-select-option :value="null">Please select...</b-form-select-option>
-      <b-form-select-option v-for="option in options" :key="option.value" :value="option.value">
-        {{ option.text }}
-      </b-form-select-option>
-    </b-form-select>
+        </div>
+        
           </td>
         </tr>
       </tbody>
     </table>
-
+    <confirmation-modal
+      :show-delete-modal="showModal"
+      :modal-data="transaction"
+      @cancel="cancelModal"
+      :action="action"
+    ></confirmation-modal>
     <nav aria-label="Page navigation nav-style" class="pagination-wrapper">
       <ul class="pagination">
         <li
@@ -110,7 +110,9 @@
     
     <script>
     import { mapActions } from 'vuex';
+    import ConfirmationModal from '../elements/confirmation-modal.vue';
 export default {
+  components:{ConfirmationModal},
   props: {
     transactions: {
       Type: Array,
@@ -127,9 +129,12 @@ export default {
       currentPage: 1,
       rowsPerPage: 10,
       selectedOption:'',
+      showModal:false,
+      action:'',
       status:1,
       search: "",
       selected: [],
+      transaction: [],
       localTransactions: this.transactions,
       options: [
         { value: 1, text: 'Withdraw Pending' },
@@ -194,7 +199,15 @@ export default {
   },
   methods: {
     ...mapActions('transaction', ['patchTransaction']),
-
+    showM2(transaction, action) {
+      console.log(transaction)
+        this.showModal = true
+        this.action = action
+        this.transaction = transaction
+    },
+    cancelModal(){
+      this.showModal = false
+    },
     onChange(transaction) {
       this.patchTransaction({ id: transaction.id, transactionData: { status: this.selectedOption } });
     },

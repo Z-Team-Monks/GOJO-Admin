@@ -20,7 +20,7 @@ $theme:#1BB55C;
 html {
 	display: grid;
 	width: 100%;
-	height: 50%;
+	height: 80%;
 	margin: center;
 
 	background: #DDEFFA;
@@ -249,7 +249,6 @@ body {
   .btn-loading {
 	background-color: lightgray !important;
   }
-
   /* Make sure the mdi-loader icon is spinning */
   .mdi-spin {
 	animation: mdi-spin 2s infinite linear;
@@ -435,5 +434,23 @@ body {
 	0% { transform: rotate(0deg); }
 	100% { transform: rotate(360deg); }
   }
+
+  .info-msg,
+.success-msg,
+.warning-msg,
+.error-msg {
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 3px 3px 3px 3px;
+}
+.success-msg {
+  color: #270;
+  background-color: #DFF2BF;
+}
+.error-msg {
+  color: #D8000C;
+  background-color: #FFBABA;
+}
+
 
 
