@@ -19,7 +19,8 @@
             </a>
           </li>
           </nuxt-link>
-          <li>
+          <nuxt-link to="/dashboard/properties">
+            <li>
             <a class="s-sidebar__nav-link" href="#0">
               <img
                 src="../../assets/images/Vector.svg"
@@ -30,6 +31,8 @@
               />
             </a>
           </li>
+          </nuxt-link>
+          <nuxt-link to="/dashboard/profile">
           <li>
             <a class="s-sidebar__nav-link" href="#0">
               <img
@@ -41,6 +44,7 @@
               />
             </a>
           </li>
+          </nuxt-link>
           <nuxt-link to="/dashboard/transaction">
             <li>
             <a class="s-sidebar__nav-link" href="#0">

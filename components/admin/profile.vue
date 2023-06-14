@@ -296,7 +296,7 @@
             </div>
           </div>
         </div>
-        <div class="profile-footer w-100 pb-5 p-3 col-12">
+        <!-- <div class="profile-footer w-100 pb-5 p-3 col-12">
           <div class="row ml-2 mr-2 mt-5">
             <div
               class="col-sm-4"
@@ -306,7 +306,7 @@
               <card :content="content" />
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
     </main>
   </div>

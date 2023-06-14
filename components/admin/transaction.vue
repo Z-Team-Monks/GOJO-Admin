@@ -10,9 +10,9 @@
 
         <div class="col-12 mt-5">
           <div class="row">
-            <div class="col-sm-7"><BarChart :chartData="chartData" /></div>
-            <!-- <div class="col-sm-6"><LineChart :chartData="chartData" /></div> -->
-            <div class="col-sm-5"><calender /></div>
+            <div class="col-sm-6"><BarChart :chartData="chartData" /></div>
+            <div class="col-sm-6"><LineChart :chartData="chartData" /></div>
+            <!-- <div class="col-sm-5"><calender /></div> -->
           </div>
         </div>
         <div class="col-12 mt-5">

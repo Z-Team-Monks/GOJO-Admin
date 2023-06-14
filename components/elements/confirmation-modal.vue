@@ -1,24 +1,23 @@
 <template>
     <div>
         <b-modal v-model="showDeleteModal" @hide="cancelDeleteModal" centered id="modal-delete" title="Change Status" hide-footer button-size="sm">
-            <p>Are you sure you want to {{ action }} this transaction?</p>
-
+            <p>Are you sure you want to release this request?</p>
             <div class="row justify-content-end">
                 <div class="col-auto">
                     <b-button variant="secondary" class="btn-labeled" @click="cancelDeleteModal">
                         <span class="btn-label"><i class="mdi mdi-close"></i></span>Cancel
                     </b-button>
                 </div>
-                <div class="col-auto" v-if="action == 'approve'">
-                    <b-button variant="success" @click="deleteUserAndCloseModal" class="btn-labeled">
-                        <span class="btn-label"><i class="mdi mdi-check"></i></span>Approve
+                <div class="col-auto">
+                    <b-button variant="success" @click="approveTransaction" class="btn-labeled">
+                        <span class="btn-label"><i class="mdi mdi-check"></i></span>Release
                     </b-button>
                 </div>
-                <div class="col-auto" v-if="action == 'decline'">
-                    <b-button variant="danger" @click="deleteUserAndCloseModal" class="btn-labeled">
+                <!-- <div class="col-auto" v-if="action == 'decline'">
+                    <b-button variant="danger" @click="declineTransaction" class="btn-labeled">
                         <span class="btn-label"><i class="mdi mdi-check"></i></span>Decline
                     </b-button>
-                </div>
+                </div> -->
             </div>
         </b-modal>
     </div>
@@ -60,10 +59,10 @@ export default {
     ...mapGetters(['getDeleteError', 'getDeleteSuccess']),
   },
   methods: {
-    ...mapActions('auth', ['deleteUser']),
-    async deleteUserAndCloseModal() {
+    ...mapActions('transaction', ['patchTransaction']),
+    async approveTransaction() {
         try {
-            await this.deleteUser(this.localModalData.id); // assuming `id` is a property of `localModalData`
+            await this.patchTransaction(this.localModalData); // assuming `id` is a property of `localModalData`
             this.$emit('cancel'); // close modal after successful deletion
         } catch (error) {
             console.error("Error deleting user:", error);

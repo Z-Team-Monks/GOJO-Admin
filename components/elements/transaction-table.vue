@@ -40,14 +40,14 @@
           </td>
           <td>
             <div class="row">
-          <div class="col-auto">
+          <!-- <div class="col-auto">
             <b-button variant="danger" @click="showM2(transaction, 'decline')" class="btn-labeled">
               <span class="btn-label"><i class="mdi mdi-close"></i></span>Decline
             </b-button>
-          </div>
-          <div class="col-auto">
-            <b-button variant="success" class="btn-labeled" @click="showM2(transaction, 'approve')">
-              <span class="btn-label"><i class="mdi mdi-check" ></i></span>Approve
+          </div> -->
+          <div class="col-auto ">
+            <b-button variant="success" class="btn-labeled float-right" @click="showM2(transaction)">
+              <span class="btn-label"><i class="mdi mdi-check" ></i></span>Release
             </b-button>
           </div>
         </div>

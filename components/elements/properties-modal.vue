@@ -51,7 +51,8 @@
           <div class="image-container">
             <div class="image-display">
               <div class="featured-image">
-                <img :src="featuredImage2" alt="Featured Image" />
+                <img v-if="images.length != 0" :src="images[0]" alt="Featured Image" />
+                <div v-else class="upload-img"><h5> Upload Images</h5></div>
               </div>
               <div class="thumbnail-images">
                 <div
@@ -166,8 +167,7 @@ export default {
     return {
       localShowModal: false,
       localModalData: {},
-      featuredImage2:
-        "https://www.shutterstock.com/image-vector/upload-icon-vector-illustration-on-260nw-1909181089.jpg",
+      featuredImage2:"",
       images: [],
       maxLength: 20,
       nameState: true,
@@ -218,6 +218,7 @@ export default {
         const reader = new FileReader();
         reader.onload = (e) => this.images.push(e.target.result);
         reader.readAsDataURL(file);
+        this.featuredImage2 = this.images[0]
       });
     },
     setFeaturedImage(image) {
@@ -252,4 +253,9 @@ export default {
 };
 </script>
 
-<style lang="sass" scoped></style>
+<style  scoped>
+.upload-img{
+  height:480px !important;
+  align-items: center;
+}
+</style>

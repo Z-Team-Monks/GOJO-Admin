@@ -39,7 +39,8 @@ export const actions = {
           commit('SET_LOADING', false);
       }
   },
-   async patchTransaction({ commit, rootState, dispatch }, { id, transactionData }) {
+   async patchTransaction({ commit, rootState, dispatch }, { id }) {
+    console.log(id)
     commit('SET_LOADING', true);
     
     try {
@@ -48,13 +49,12 @@ export const actions = {
             token = rootState.auth.token; // get token from the properties module
         }
 
-        const res = await fetch(`http://34.163.240.198/api/v1/transactions/${id}/`, {
-            method: 'PATCH',
+        const res = await fetch(`http://34.163.240.198/api/v1/transactions/${id}/release_fund/`, {
+            method: 'POST',
             headers: token ? {
                 'Authorization': `Token ${token}`, // attach token to the request
                 'Content-Type': 'application/json'
             } : {},
-            body: JSON.stringify(transactionData)
         });
 
         const data = await res.json();
