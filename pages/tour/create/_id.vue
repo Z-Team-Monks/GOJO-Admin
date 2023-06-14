@@ -1,0 +1,102 @@
+<template>
+  <div class="container-fluid tour">
+    <navbar :brand="'Virtual Tour'" />
+    <div>
+      <div class="row">
+        <div class="col-lg-3 col-sm-12">
+          <tour-property />
+          <tour-upload
+            ref="uploadRef"
+            @onUpload="onUpload"
+            @onImageDelete="handleImageDelete"
+            @onImageSelected="handleImageSelected"
+            @onClearUpload="handleImageCleared"
+          />
+        </div>
+        <div class="col-lg-9 col-sm-12">
+          <div class="text-center">
+            <h2 v-if="!hotspotNodes.length" class="mt-10">
+              Pick Image to Start
+            </h2>
+          </div>
+          <tour-canvas ref="canvasRef" :propertyId="propertyId" />
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import TourCanvas from "../../../components/tour/TourCanvas.vue";
+import TourProperty from "../../../components/tour/TourProperty.vue";
+import TourUpload from "../../../components/tour/TourUpload.vue";
+import { mapGetters } from "vuex";
+import Navbar from "../../../components/elements/navbar.vue";
+
+export default {
+  components: {
+    TourUpload,
+    TourProperty,
+    TourCanvas,
+    Navbar,
+  },
+  name: "Tour",
+  data: () => ({
+    selectedImage: false,
+    propertyId: "",
+  }),
+  computed: {
+    ...mapGetters("tour", ["hotspotNodes"]),
+  },
+  methods: {
+    onUpload(images) {
+      const canvasRef = this.$refs.canvasRef;
+      canvasRef.addImages(images);
+      this.selectedImage = true;
+    },
+    handleImageChange(imageId) {
+      const uploadRef = this.$refs.uploadRef;
+      uploadRef.updateSelected(imageId);
+    },
+    handleImageSelected(imageId) {
+      const canvasRef = this.$refs.canvasRef;
+      canvasRef.updateSelected(imageId);
+    },
+    handleImageDelete(imageId) {
+      const canvasRef = this.$refs.canvasRef;
+      canvasRef.removeNode(imageId);
+    },
+    handleImageCleared() {
+      const canvasRef = this.$refs.canvasRef;
+      canvasRef.clearCanvas();
+    },
+  },
+  mounted() {
+    this.propertyId = this.$route.params.id;
+    if (!this.propertyId) {
+      this.$router.push({ path: "/dashboard/properties" });
+    }
+  },
+};
+</script>
+
+<style>
+.tour {
+  background: #f4f6f8;
+  height: 100vh;
+}
+#scrollbar1::-webkit-scrollbar {
+  width: 10px;
+}
+
+#scrollbar1::-webkit-scrollbar-track {
+  border-radius: 8px;
+  background-color: #e7e7e7;
+  border: 1px solid #cacaca;
+}
+
+#scrollbar1::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  background-color: rgba(17, 101, 0, 0.644);
+}
+</style>

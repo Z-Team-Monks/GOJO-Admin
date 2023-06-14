@@ -1,0 +1,32 @@
+@import './elements/login';
+
+@import './elements/card';
+
+@import './elements/table';
+
+@import './elements/sidebar';
+
+@import './elements//calender';
+
+@import './elements/tabs';
+
+@import './elements/profile';
+
+@import './elements/modal';
+
+.dashboard{
+    background-color: #F4F6F8 !important;
+}
+
+// overrides
+$psv-loader-color: rgba(0, 0, 0, .5);
+$psv-loader-width: 100px;
+
+// main stylesheet
+// @import 'photo-sphere-viewer/src/styles/index.scss';
+
+// plugins stylesheets
+// @import 'photo-sphere-viewer/markers-plugin/index.scss';
+// @import 'photo-sphere-viewer/virtual-tour-plugin/index.scss';
+
+// @import 'photo-sphere-viewer/dist/photo-sphere-viewer.css';
