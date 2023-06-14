@@ -65,10 +65,10 @@ export default {
   },
   privateRuntimeConfig: {},
 
-  server: {
-    host: "192.168.149.134",
-    port: "3000",
-  },
+  // server: {
+  //   host: "192.168.149.134",
+  //   port: "3000",
+  // },
 };
 
 // http://192.168.28.207:8000/api/v1
