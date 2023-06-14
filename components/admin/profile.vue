@@ -26,6 +26,7 @@
             :modal-data="user"
             :create-user="false"
             @cancel="cancelModal"
+            :cannotUpdateRole="true"
           ></user-modal>
           <div class="profile-content">
             <div class="row align-items-center">
@@ -358,11 +359,11 @@ export default {
       ],
     };
   },
-  mounted() {
-    this.currentUser;
-  },
   computed: {
     ...mapGetters("auth", ["currentUser", "getSuccess", "getError"]),
+    isGeneralManager() {
+      return this.currentUser.role == 4;
+    },
   },
   methods: {
     // ...mapActions('auth', ['fetchCurrentUser']),

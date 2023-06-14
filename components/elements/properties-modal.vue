@@ -12,13 +12,34 @@
     >
       <template #modal-header="{}">
         <h4>{{ modalData.category }}: {{ modalData.title }}</h4>
+        <div class="d-flex align-items-center">
+          <div>
+            <b-form-select
+              v-model="selectedOption"
+              :options="optionsStatus"
+            ></b-form-select>
+          </div>
+          <div>
+            <b-button
+              @click="updateStatus"
+              variant="success"
+              class="btn-labeled"
+              >Apply</b-button
+            >
+          </div>
+        </div>
       </template>
       <div class="row">
         <div class="col-sm-6">
           <div class="image-container">
             <div class="image-display">
               <div class="featured-image">
-                <img :src="featuredImage" alt="Featured Image" />
+                <div v-if="!featuredImage">No Image for this property</div>
+                <img
+                  v-if="featuredImage"
+                  :src="featuredImage"
+                  alt="Featured Image"
+                />
               </div>
               <div class="thumbnail-images">
                 <div
@@ -54,7 +75,9 @@
                 <img v-if="images.length != 0" :src="images[0]" alt="Featured Image" />
                 <div v-else class="upload-img"><h5> Upload Images</h5></div>
               </div>
-              <div class="thumbnail-images">
+              <div
+                class="thumbnail-images d-flex align-items-center justify-content-center"
+              >
                 <div
                   class="thumbnail"
                   v-for="(image, index) in images"
@@ -183,6 +206,12 @@ export default {
         { value: 4, text: "Listing Manager" },
         { value: 5, text: "General Manager" },
       ],
+      optionsStatus: [
+        { value: 0, text: "Pending" },
+        { value: 1, text: "Approved" },
+        { value: 2, text: "Rejected" },
+      ],
+      selectedOption: null,
     };
   },
   watch: {
@@ -208,9 +237,17 @@ export default {
       },
     },
   },
-
+  mounted() {
+    this.selectedOption = this.modalData.status;
+  },
   methods: {
     ...mapActions("properties", ["postProperty"]),
+    updateStatus() {
+      this.$store.dispatch("properties/updateStatus", {
+        status: this.selectedOption,
+        id: this.modalData.id,
+      });
+    },
     handleFiles(event) {
       const files = Array.from(event.target.files);
       this.files = files;

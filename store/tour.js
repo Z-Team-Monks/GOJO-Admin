@@ -13,7 +13,7 @@ export const state = () => ({
   ],
   uploadProgress: 0,
   tourPublished: false,
-  publishedURL: '',
+  publishedURL: "",
   defaultViewPostion: {
     latitude: 0.2,
     longitude: 0.5,
@@ -71,7 +71,7 @@ export const mutations = {
     if (state.initialView) {
       state.currentView = state.initialView;
     } else {
-      state.currentView = hotspotNodes[0].id;
+      state.currentView = hotspotNodes[0]?.id;
       state.initialView = state.currentView;
     }
   },
@@ -80,7 +80,7 @@ export const mutations = {
     if (state.initialView) {
       state.currentView = state.initialView;
     } else {
-      state.currentView = state.hotspotNodes[0].id;
+      state.currentView = state.hotspotNodes[0]?.id;
       state.initialView = state.currentView;
     }
   },
@@ -143,9 +143,9 @@ export const mutations = {
   UPDATE_PUBLISH_STATUS(state, status) {
     state.tourPublished = status;
   },
-  UPDATE_PUBLISH_URL(state, url){
-    state.publishedURL = url
-  }
+  UPDATE_PUBLISH_URL(state, url) {
+    state.publishedURL = url;
+  },
 };
 
 export const actions = {
@@ -188,17 +188,17 @@ export const actions = {
   setInitialView({ commit }) {
     commit("SET_INITIAL_VIEW");
   },
-  async fetchTour({ commit }, id) {
+  async fetchTour({ commit, rootState }, id) {
     commit("SET_LOADING", true);
     commit("SET_HOTSPOTS", []);
     try {
-      const token = localStorage.getItem('token');
       const res = await fetch(
-        `${this.$config.baseUrl}/properties/${id}/virtual_tour/`, {
-          method: 'GET',
+        `${this.$config.baseUrl}/properties/${id}/virtual_tour/`,
+        {
+          method: "GET",
           headers: {
-            'Authorization': `Token ${token}`,
-            'Content-Type': 'application/json',
+            Authorization: `Token ${rootState.auth.token}`,
+            "Content-Type": "application/json",
           },
         }
       );
@@ -206,7 +206,7 @@ export const actions = {
 
       // Check if the response status is OK
       if (res.ok) {
-        const { hotspotNodes, defaultViewPostion, initialView  } = data;
+        const { hotspotNodes, defaultViewPostion, initialView } = data;
         commit("SET_HOTSPOTS", hotspotNodes);
         commit("SET_VIEW_POSTION", defaultViewPostion);
         commit("SET_INITIAL_VIEW", initialView);
@@ -219,40 +219,33 @@ export const actions = {
       commit("SET_LOADING", false);
     }
   },
-  async postTour({ commit }, { data, id }) {
+  async postTour({ commit, rootState }, { data, id }) {
     commit("SET_LOADING", true);
     try {
-      const URL = `${this.$config.baseUrl}/properties/${id}/virtual_tour/`
-      const P_URL = `${this.$config.localUrl}/tour/view/${id}`
-      const token = localStorage.getItem('token');
-      const resp = await axios.post(
-        URL,
-        data,
-        {
-          timeout: 100000,
-          onUploadProgress: (progressEvent) => {
-            const percentCompleted = Math.round(
-              (progressEvent.loaded * 100) / progressEvent.total
-            );
-            commit('UPDATE_PROGRESS', percentCompleted)
-          },
-          headers: {
-            'Authorization': `Token ${token}`,
-            'Content-Type': 'application/json',
-          }
-        }
-      );
+      const URL = `${this.$config.baseUrl}/properties/${id}/virtual_tour/`;
+      const P_URL = `${this.$config.localUrl}/tour/view/${id}`;
+      const resp = await axios.post(URL, data, {
+        timeout: 100000,
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total
+          );
+          commit("UPDATE_PROGRESS", percentCompleted);
+        },
+        headers: {
+          Authorization: `Token ${rootState.auth.token}`,
+          "Content-Type": "application/json",
+        },
+      });
       const res = resp.data;
-      commit("UPDATE_PUBLISH_STATUS", true)
-      commit('UPDATE_PUBLISH_URL', P_URL)
-      console.log(res)
+      commit("UPDATE_PUBLISH_STATUS", true);
+      commit("UPDATE_PUBLISH_URL", P_URL);
     } catch (error) {
-      commit('UPDATE_PROGRESS', 0)
-      commit("UPDATE_PUBLISH_STATUS", false)
-      commit('UPDATE_PUBLISH_URL', '')
+      commit("UPDATE_PROGRESS", 0);
+      commit("UPDATE_PUBLISH_STATUS", false);
+      commit("UPDATE_PUBLISH_URL", "");
       console.error("An error occurred:", error.message);
       throw new Error("Unknown Error while publishing");
-
     } finally {
       commit("SET_LOADING", false);
     }
@@ -270,5 +263,5 @@ export const getters = {
   tourLoading: (state) => state.tourLoading,
   uploadProgress: (state) => state.uploadProgress,
   tourPublished: (state) => state.tourPublished,
-  publishedURL: (state) => state.publishedURL
+  publishedURL: (state) => state.publishedURL,
 };

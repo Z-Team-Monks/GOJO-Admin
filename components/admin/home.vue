@@ -175,7 +175,6 @@ export default {
           .then(() => {
             // Assign the fetched user data to userList
             this.userList = this.$store.state.auth.users;
-            console.log("User data fetched successfully");
           })
           .catch((error) => {
             console.error("Error fetching user data:", error);
@@ -192,5 +191,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

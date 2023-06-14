@@ -43,15 +43,24 @@ export default {
   },
   methods: {
     ...mapActions("tour", ["fetchTour"]),
+    parseNodes(nodes) {
+      return nodes.map((node) => ({
+        ...node,
+        markers: node.markers.map((marker) => ({
+          ...marker,
+          image: require("~/assets/images/svg/arrow-up.256x256.png"),
+        })),
+      }));
+    },
   },
   async mounted() {
     this.hasError = false;
     const tourId = this.$route.params.id;
+    console.log(tourId);
     if (!tourId) {
       this.$router.push("/dashboard/properties");
     }
     await this.fetchTour(tourId);
-    console.log(this.hotspotNodes);
     let currentPanorama = null;
     if (this.initialView && !!this.hotspotNodes.length) {
       currentPanorama = this.hotspotNodes.find(
@@ -69,7 +78,7 @@ export default {
     if (currentPanorama) {
       this.tourPlugin = this.viewer.getPlugin(VirtualTourPlugin);
       this.tourPlugin.setNodes(
-        this.hotspotNodes,
+        this.parseNodes(this.hotspotNodes),
         this.initialView ?? this.hotspotNodes[0].id
       );
     } else {

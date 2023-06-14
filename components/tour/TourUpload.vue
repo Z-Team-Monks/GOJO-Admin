@@ -122,7 +122,7 @@ export default {
       this.$emit("onImageSelected", image.id);
     },
     onUnpublishedChange(e) {
-      console.log(e);
+      // console.log(e);
     },
     extractImages() {
       return this.hotspotNodes.map((node) => ({

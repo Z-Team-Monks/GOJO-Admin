@@ -8,7 +8,7 @@
       :title="createUser == true ? 'Create User' : 'Edit User'"
       hide-footer
       button-size="sm"
-    > 
+    >
       <form ref="form" class="my-4">
         <b-form-group label="First Name" invalid-feedback="Name is required">
           <b-form-input
@@ -46,27 +46,11 @@
             required
           ></b-form-input>
         </b-form-group>
-        <!-- <b-form-group
-  v-if="createUser == true"
-    
-    invalid-feedback="Name is required"
-  >
-    <b-form-input
-      id="confirm-password-input"
-      placeholder="Confirm Password"
-      v-model="name"
-      
-      required
-    ></b-form-input>
-  </b-form-group> -->
-        <b-form-group label="Role" invalid-feedback="Name is required">
-          <!-- <b-form-input
-      id="confirm-password-input"
-      placeholder="Role"
-     
-      
-      required
-    ></b-form-input> -->
+        <b-form-group
+          v-if="!cannotUpdateRole"
+          label="Role"
+          invalid-feedback="Name is required"
+        >
           <b-form-select
             class="status-select"
             v-model="localModalData.role"
@@ -129,6 +113,9 @@ export default {
     createUser: {
       type: Boolean,
     },
+    cannotUpdateRole: {
+      type: Boolean,
+    },
   },
   data() {
     return {
@@ -154,7 +141,7 @@ export default {
       this.localShowModal = value;
     },
     loading(newValue) {
-        this.$store.commit('auth/setUpdateLoading', newValue);
+      this.$store.commit("auth/setUpdateLoading", newValue);
     },
     modalData: {
       handler(newValue) {
@@ -165,17 +152,14 @@ export default {
   },
   computed: {
     ...mapGetters(["getUpdateError", "getUpdateSuccess"]),
-    ...mapState('auth', {
-       
-        loading: state => state.updateLoading,
-        
-
-      }),
+    ...mapState("auth", {
+      loading: (state) => state.updateLoading,
+    }),
   },
   methods: {
     updateUser() {
       this.$store.dispatch("auth/updateUser", this.localModalData); // Use the local copy to update the user
-      if(this.loading == true){
+      if (this.loading == true) {
         this.$emit("cancel");
       }
     },
