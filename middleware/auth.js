@@ -13,6 +13,8 @@ export default function ({ redirect, route, store }) {
   ];
   const FINANCE_ALLOWED = ["/dashboard/transaction", "/dashboard/profile"];
 
+  if (route.path.startsWith("/tour/view")) return true;
+
   // If not authenticated, redirect to the login page
   if (!hasToken && route.path !== "/") {
     return redirect("/");

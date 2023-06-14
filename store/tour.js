@@ -197,7 +197,6 @@ export const actions = {
         {
           method: "GET",
           headers: {
-            Authorization: `Token ${rootState.auth.token}`,
             "Content-Type": "application/json",
           },
         }
