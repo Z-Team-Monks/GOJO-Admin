@@ -4,8 +4,8 @@
     <sidebar />
     <main class="s-layout__content">
       <div class="row m-5">
-        <div class="col-sm-4" v-for="content in cardContent" :key="content.id">
-          <card :content="content" />
+        <div class="col-sm-4" v-for="(content, i) in cardContent" :key="i">
+          <card :content="content"  :report="getUsersReport"/>
         </div>
         <div class="col-12 mt-5">
           <div class="row border-bottom justify-content-between">
@@ -37,7 +37,7 @@
           <div class="tab-content pt-3">
             <div class="tab-pane fade show active" id="all">
               <Table
-                :users="filteredUsers"
+                :users="usersFiltered"
                 :show-modal="showModal"
                 :columns="columns"
               />
@@ -113,24 +113,24 @@ export default {
       // ],
       cardContent: [
         {
-          id: "1",
-          title: "End Users",
+          id: "landlord",
+          title: "Total Landlords",
           icon: "mdi mdi-account-multiple-outline mdi-48px card-i",
-          value: "92, 680",
+          page: "users",
           subscript: "+300 (26,80%)",
         },
         {
-          id: "2",
-          title: "Financial Managers",
-          icon: "mdi mdi mdi-eye-outline mdi-48px card-i",
-          value: "680",
+          id: "tenant",
+          title: "Total Tenants",
+          icon: "mdi mdi mdi-account-multiple-outline mdi-48px card-i",
+          page: "users",
           subscript: "+20 (16,20%)",
         },
         {
-          id: "3",
-          title: "Listing Managers",
-          icon: "mdi mdi-chart-bar mdi-48px card-i",
-          value: "380",
+          id: "in_active",
+          title: "Inactive Users",
+          icon: "mdi mdi-account-off mdi-48px card-i",
+          page: "users",
           subscript: "+24 (0.74%)",
         },
       ],
@@ -156,11 +156,12 @@ export default {
     this.currentUser;
     if (process.browser) {
       this.fetchUserData();
+      this.fetchReport()
     }
   },
   computed: {
-    ...mapGetters("auth", ["isAuthenticated", "getUsers"]),
-    filteredUsers() {
+    ...mapGetters("auth", ["isAuthenticated", "getUsers", 'getUsersReport']),
+    usersFiltered() {
       if (this.filter == "all") return this.getUsers;
       const users = { ...this.getUsers };
       if (this.filter == "active") {
@@ -174,7 +175,7 @@ export default {
   },
 
   methods: {
-    ...mapActions("auth", ["fetchUser"]),
+    ...mapActions("auth", ["fetchUser",  "fetchReport"]),
     handleTabUpdate(tab) {
       this.filter = tab;
     },

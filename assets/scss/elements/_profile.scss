@@ -11,6 +11,9 @@
     outline: none;
     box-shadow: none;
 }
+.prof-cont{
+	height: 90vh !important;
+}
 
 .profile-card h6,
 .profile-footer h6 {
@@ -29,7 +32,7 @@
 
   .profile-card {
 	/* existing styles... */
-	height: 90vh;
+	height: 70vh;
 	.navbar {
 	  border-bottom: 1px solid #ddd; // you can adjust the color and thickness as needed
 	  width: 100%;

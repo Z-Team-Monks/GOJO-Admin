@@ -10,64 +10,79 @@
       button-size="sm"
     >
       <form ref="form" class="my-4">
-        <b-form-group label="First Name" invalid-feedback="Name is required">
-          <b-form-input
-            id="old-password-input"
-            placeholder="First Name"
-            v-model="localModalData.first_name"
-            required
-          ></b-form-input>
-        </b-form-group>
-        <b-form-group label="Last Name" invalid-feedback="Name is required">
-          <b-form-input
-            id="new-password-input"
-            placeholder="Last Name"
-            v-model="localModalData.last_name"
-            required
-          ></b-form-input>
-        </b-form-group>
-        <b-form-group label="Phone" invalid-feedback="Name is required">
-          <b-form-input
-            id="confirm-password-input"
-            placeholder="Phone"
-            v-model="localModalData.phone"
-            required
-          ></b-form-input>
-        </b-form-group>
-        <b-form-group
-          v-if="createUser == true"
-          label="Password"
-          invalid-feedback="Name is required"
-        >
-          <b-form-input
-            id="confirm-password-input"
-            placeholder="Password"
-            v-model="localModalData.password"
-            required
-          ></b-form-input>
-        </b-form-group>
-        <b-form-group
-          v-if="!cannotUpdateRole"
-          label="Role"
-          invalid-feedback="Name is required"
-        >
-          <b-form-select
-            class="status-select"
-            v-model="localModalData.role"
-            :options="options0"
-          ></b-form-select>
-        </b-form-group>
-        <b-form-group
-          v-if="createUser == false"
-          label="Status"
-          invalid-feedback="Name is required"
-        >
-          <b-form-select
-            class="status-select"
-            v-model="localModalData.is_active"
-            :options="options"
-          ></b-form-select>
-        </b-form-group>
+        <div class="row">
+          <div class="col-sm-6">
+            <b-form-group
+              label="First Name"
+              invalid-feedback="Name is required"
+            >
+              <b-form-input
+                id="old-password-input"
+                placeholder="First Name"
+                v-model="localModalData.first_name"
+                required
+              ></b-form-input>
+            </b-form-group>
+          </div>
+          <div class="col-sm-6">
+            <b-form-group label="Last Name" invalid-feedback="Name is required">
+              <b-form-input
+                id="new-password-input"
+                placeholder="Last Name"
+                v-model="localModalData.last_name"
+                required
+              ></b-form-input>
+            </b-form-group>
+          </div>
+          <div class="col-sm-6">
+            <b-form-group label="Phone" invalid-feedback="Name is required">
+              <b-form-input
+                id="confirm-password-input"
+                placeholder="Phone"
+                v-model="localModalData.phone"
+                required
+              ></b-form-input>
+            </b-form-group>
+          </div>
+          <div v-if="createUser == true" class="col-sm-6">
+            <b-form-group label="Password" invalid-feedback="Name is required">
+              <b-form-input
+                id="confirm-password-input"
+                placeholder="Password"
+                v-model="localModalData.password"
+                required
+              ></b-form-input>
+            </b-form-group>
+          </div>
+          <div v-if="!cannotUpdateRole && createUser == true" class="col-sm-6">
+            <b-form-group label="Role" invalid-feedback="Name is required">
+              <b-form-select
+                class="status-select"
+                v-model="localModalData.role"
+                :options="options0"
+              ></b-form-select>
+            </b-form-group>
+          </div>
+          <div v-if="createUser == false" class="col-sm-6">
+            <b-form-group label="Status" invalid-feedback="Name is required">
+              <b-form-select
+                class="status-select"
+                v-model="localModalData.is_active"
+                :options="options"
+              ></b-form-select>
+            </b-form-group>
+          </div>
+        </div>
+
+        <div v-if="localModalData.identification != null">
+          <h5>ID Card</h5>
+          <img
+            width="465"
+            height="250"
+            :src="localModalData.identification"
+            alt=""
+          />
+        </div>
       </form>
 
       <div class="row justify-content-end">
@@ -86,7 +101,7 @@
             <span class="btn-label"><i class="mdi mdi-check"></i></span>Save
           </b-button>
           <b-button
-            v-else
+          v-if="createUser == true"
             variant="success"
             @click="createUserMethod"
             class="btn-labeled"
@@ -158,10 +173,20 @@ export default {
   },
   methods: {
     updateUser() {
-      this.$store.dispatch("auth/updateUser", this.localModalData); // Use the local copy to update the user
+      console.log(this.cannotUpdateRole)
+      if(!this.cannotUpdateRole){
+        console.log(this.cannotUpdateRole)
+        this.$store.dispatch("auth/updateUser", this.localModalData); // Use the local copy to update the user
+      
+      }
+      else{
+        console.log(this.cannotUpdateRole)
+        this.$store.dispatch("auth/updateCurrentUser", this.localModalData); // Use the local copy to update the user
+      }
       if (this.loading == true) {
         this.$emit("cancel");
       }
+      
     },
     createUserMethod() {
       this.$store.dispatch("auth/createUser", this.localModalData); // Use the local copy to update the user

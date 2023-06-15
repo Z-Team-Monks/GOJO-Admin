@@ -1,7 +1,7 @@
 <template>
     <div>
-        <b-modal v-model="showDeleteModal" @hide="cancelDeleteModal" centered id="modal-delete" title="Change Status" hide-footer button-size="sm">
-            <p>Are you sure you want to release this request?</p>
+        <b-modal v-model="showDeleteModal" @hide="cancelDeleteModal" centered id="modal-delete" title="Release Withdraw" hide-footer button-size="sm">
+            <p>Are you sure you want to approve this withdraw request?</p>
             <div class="row justify-content-end">
                 <div class="col-auto">
                     <b-button variant="secondary" class="btn-labeled" @click="cancelDeleteModal">

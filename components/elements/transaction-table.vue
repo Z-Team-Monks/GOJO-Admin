@@ -45,17 +45,18 @@
               <span class="btn-label"><i class="mdi mdi-close"></i></span>Decline
             </b-button>
           </div> -->
-              <div class="col-auto">
-                <b-button
-                  variant="success"
-                  class="btn-labeled float-right"
-                  @click="showM2(transaction)"
-                >
-                  <span class="btn-label"><i class="mdi mdi-check"></i></span
-                  >Release
-                </b-button>
-              </div>
-            </div>
+          <div class="col-auto" v-if="transaction.status == 'pending'">
+            <b-button variant="success" class="btn-labeled float-right" @click="showM2(transaction)">
+              <span class="btn-label"><i class="mdi mdi-check" ></i></span>Release
+            </b-button>
+          </div>
+          <div v-else class="col-auto">
+            <b-button variant="success" class="btn-labeled float-right" disabled>
+              <span class="btn-label"><i class="mdi mdi-check" ></i></span>Release
+            </b-button>
+          </div>
+        </div>
+        
           </td>
         </tr>
       </tbody>
@@ -182,7 +183,7 @@ export default {
         var selected = [];
 
         if (value) {
-          this.transactions.forEach(function (user) {
+          this.transactions.results.forEach(function (user) {
             selected.push(user.id);
           });
         }

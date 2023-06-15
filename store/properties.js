@@ -6,6 +6,7 @@ export const state = () => ({
   loading: false,
   allCategories: [],
   allFacilities: [],
+  repo:[],
 });
 
 export const mutations = {
@@ -69,6 +70,9 @@ export const mutations = {
       return p;
     });
   },
+  SET_PROPERTIES_REPORT(state, value){
+    state.repo = value
+  }
 };
 
 export const actions = {
@@ -97,7 +101,31 @@ export const actions = {
       commit("SET_LOADING", false);
     }
   },
+  async fetchPropertiesReport({ commit, rootState }) {
+    commit("SET_LOADING", true);
+    try {
+      const res = await fetch(`${this.$config.baseUrl}/properties/report/`, {
+        method: "GET",
+        headers: {
+          Authorization: `Token ${rootState.auth.token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await res.json();
 
+      // Check if the response status is OK
+      if (res.ok) {
+        commit("SET_PROPERTIES_REPORT", data);
+      } else {
+        throw new Error(data.message || "Failed to get properties");
+      }
+    } catch (error) {
+      console.error("An error occurred:", error.message);
+      // Handle error...
+    } finally {
+      commit("SET_LOADING", false);
+    }
+  },
   async postProperty({ commit, rootState }, { data, id }) {
     commit("SET_LOADING", true);
     try {
@@ -310,4 +338,5 @@ export const getters = {
   loading: (state) => state.loading,
   categories: (state) => state.allCategories,
   facilities: (state) => state.allFacilities,
+  getRepo: (state) => state.repo
 };

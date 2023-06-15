@@ -14,6 +14,7 @@ export const state = () => ({
   currentUser: {},
   getError: null,
   getSuccess: false,
+  userReport:[]
 });
 
 export const getters = {
@@ -28,6 +29,7 @@ export const getters = {
   currentUser: (state) => state.currentUser,
   getSuccess: (state) => state.getSuccess,
   getErrorMessage: (state) => state.error,
+  getUsersReport: (state) => state.userReport
 };
 
 export const mutations = {
@@ -94,6 +96,9 @@ export const mutations = {
   setUpdateLoading(state, value) {
     state.updateLoading = value;
   },
+  setReport(state, value) {
+    state.userReport = value
+  }
 };
 
 export const actions = {
@@ -135,6 +140,39 @@ export const actions = {
       console.log(error);
       commit("setError", error);
       commit("setSuccessMessage", null);
+    }
+  },
+  async fetchReport({ commit, state }) {
+    try {
+      commit("setLoading", true);
+      const token = state.token;
+      if (!token) {
+        throw new Error("Token not found");
+      }
+      const response = await fetch(`${this.$config.baseUrl}/users/report/`, {
+        method: "GET",
+        headers: {
+          Authorization: `Token ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        const error = new Error(
+          "An error occurred while attempting to fetch report"
+        );
+        error.response = response;
+        throw error;
+      }
+
+      const data = await response.json();
+
+      // Save the user data
+      commit("setReport", data);
+      commit("setLoading", false);
+    } catch (error) {
+      console.error(error.message);
+      commit("setLoading", false);
     }
   },
   async fetchUser({ commit, state }) {
@@ -220,7 +258,15 @@ export const actions = {
         Authorization: `Token ${token}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(userData),
+      body: JSON.stringify({
+  
+first_name: userData.first_name,
+id: userData.id,
+is_active: userData.is_active,
+last_name: userData.last_name,
+phone: userData.phone,
+role: userData.role
+      }),
     };
     fetch(url, options)
       .then((response) => {
@@ -231,6 +277,52 @@ export const actions = {
       })
       .then((json) => {
         commit("setUser", json);
+        dispatch("fetchUser");
+
+        commit("setUpdateSuccess", "Success: Update was successful");
+        commit("setUpdateError", null);
+      })
+      .catch((error) => {
+        commit("setUpdateError", error);
+        commit("setUpdateSuccess", null);
+      })
+      .finally(() => {
+        commit("setUpdateLoading", false); // End the loading state
+      });
+  },
+  updateCurrentUser({ commit, dispatch, state }, userData) {
+    const token = state.token;
+    if (!token) {
+      throw new Error("Token not found");
+    }
+    commit("setUpdateLoading", true); // Start the loading state
+    const url = `${this.$config.baseUrl}/users/${userData.id}/`;
+    const options = {
+      method: "PATCH",
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+  
+first_name: userData.first_name,
+id: userData.id,
+is_active: userData.is_active,
+last_name: userData.last_name,
+phone: userData.phone,
+role: userData.role
+      }),
+    };
+    fetch(url, options)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((json) => {
+        console.log(json)
+        commit("setCurrentUser", json);
         dispatch("fetchUser");
 
         commit("setUpdateSuccess", "Success: Update was successful");

@@ -49,7 +49,7 @@
     name: "Index",
     date(){
   return{
-    toastDuration: 5000, // Duration of the toast
+    toastDuration: 4000, // Duration of the toast
   }
     },
     computed: {
@@ -130,7 +130,7 @@
     opacity: 0;
   }
   .toast:not(.show) {
-      display: flex;
+      // display: flex;
   }
   @keyframes spin {
     0% { transform: rotate(0deg); }

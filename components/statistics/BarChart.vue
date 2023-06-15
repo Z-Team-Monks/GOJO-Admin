@@ -1,6 +1,6 @@
 <template>
     <div class="chart-card pa-2">
-        <h3 class="text-center mt-8" v-if="chartData.labels.length > 0">Transaction History</h3>
+        <h3 class="text-center mt-8" v-if="chartData.labels.length > 0">Transaction Report</h3>
       <BarChart
        
         :chartData="chartData"

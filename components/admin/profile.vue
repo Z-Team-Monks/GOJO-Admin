@@ -3,7 +3,7 @@
     <navbar />
     <sidebar />
     <main class="s-layout__content">
-      <div class="row ml-5 mr-5 mt-2">
+      <div class="row ml-5 mr-5 mt-2 prof-cont">
         <div class="profile-card mb-3 col-12">
           <nav
             class="navbar navbar-light justify-content-between align-items-center"

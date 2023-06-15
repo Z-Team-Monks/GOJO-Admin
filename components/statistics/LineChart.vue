@@ -1,6 +1,6 @@
 <template>
     <div class="chart-card pa-2">
-        <h3 class="text-center mt-8" v-if="chartData.labels.length > 0">Transaction History</h3>
+        <h3 class="text-center mt-8" v-if="chartData.labels.length > 0">Transaction Report</h3>
       <LineC v-if="chartData.labels.length > 0" :chartData="chartData" :options="options" :height="210"  />
       
       
@@ -38,10 +38,10 @@
   
   <style>
   .chart-card {
-    border-radius: 4%;
+    border-radius: 1%;
     padding: .5rem;
     background-color: white;
-    border: 2px #1BB55C solid;
+    /* border: 2px #1BB55C solid; */
    
   }
   </style>

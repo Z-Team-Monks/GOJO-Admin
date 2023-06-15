@@ -5,12 +5,7 @@
         <td>Loading...</td>
       </tr>
     </table>
-    <table v-else-if="!isLoading && paginatedUsers.length === 0">
-      <tr>
-        <td class="p-5">No users found</td>
-      </tr>
-    </table>
-    <div v-else>
+    <div>
       <div class="table-header">
         <div class="header-row">
           <div>
@@ -26,7 +21,7 @@
                 v-model="searchTerm"
                 placeholder="Search..."
                 class="search-input"
-                @input="handleSearch"
+               
               />
 
               <i class="mdi mdi-close" @click="disableSearch"></i>
@@ -42,118 +37,88 @@
           </div>
         </div>
       </div>
-      <table class="table">
-        <thead>
-          <tr>
-            <th align="left">
-              <input type="checkbox" v-model="selectAll" />
-            </th>
-            <th v-for="column in columns" :key="column">
-              <span class="colss">
-                {{ column }}
-              </span>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="user in paginatedUsers" :key="user.id">
-            <td style="width: 3%">
-              <input
-                type="checkbox"
-                v-model="selected"
-                :value="user.id"
-                number
-              />
-            </td>
-            <td>
-              <img
-                src="https://cdn-icons-png.flaticon.com/512/219/219988.png"
-                class="mr-2"
-                width="40"
-                alt=""
-              />
-              <strong>{{ user.first_name }}</strong>
-            </td>
-            <td>
-              {{ user.last_name }}
-            </td>
-            <td>
-              {{ user.phone }}
-            </td>
-            <td v-if="user.role == 1">Tenant</td>
-            <td v-else-if="user.role == 2">Landlord</td>
-            <td v-else-if="user.role == 3">Financial Manager</td>
-            <td v-else-if="user.role == 4">Listing Manager</td>
-            <td v-else>General Manager</td>
-            <td v-if="user.is_active == true">
-              <div class="active-stat text-center">Active</div>
-            </td>
-            <td v-if="user.is_active == false">
-              <div class="deactive-stat text-center">Disabled</div>
-            </td>
-            <td class="row">
-              <div class="col-sm-6 edit-icon mr-1" @click="showM(user)">
-                <i class="mdi mdi-account-edit"></i>
-              </div>
-
-              <!-- <div class="col-sm-6 delete-icon" @click="showM2(user)">
+    </div>
+    <div v-if="filterEmployees.results">
+      <table v-if="!isLoading && filterEmployees.results.length === 0">
+      <tr >
+        <td class="p-5"> No users found</td>
+      </tr>
+    </table>
+  
+    <table class="table" v-else>
+      <thead>
+        <tr>
+          <th align="left">
+            <input type="checkbox" v-model="selectAll" />
+          </th>
+          <th v-for="column in columns" :key="column">
+            <span class="colss">
+              {{ column }}
+            </span>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="user in filterEmployees.results" :key="user.id">
+          <td style="width: 3%">
+            <input type="checkbox" v-model="selected" :value="user.id" number />
+          </td>
+          <td>
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/219/219988.png"
+              class="mr-2"
+              width="40"
+              alt=""
+            />
+            <strong>{{ user.first_name }}</strong>
+          </td>
+          <td>
+            {{
+              user.last_name 
+            }}
+          </td>
+          <td>
+            {{
+              user.phone
+            }}
+          </td>
+          <td v-if="user.role == 1">Tenant</td>
+          <td v-else-if="user.role == 2">Landlord</td>
+          <td v-else-if="user.role == 3">Financial Manager</td>
+          <td v-else-if="user.role == 4">Listing Manager</td>
+          <td v-else>General Manager</td>
+          <td v-if="user.is_active == true">
+            <div class="active-stat text-center">
+              Active
+            </div>
+          </td>
+          <td v-if="user.is_active == false">
+            <div class="deactive-stat text-center">
+             Disabled
+            </div>
+          </td>
+          <td class="row">
+            <div class="col-sm-6 edit-icon mr-1" @click="showM(user)">
+              <i class="mdi mdi-account-edit"></i>
+            </div>
+              
+            <!-- <div class="col-sm-6 delete-icon" @click="showM2(user)">
               <i class="mdi mdi-delete"></i>
             </div> -->
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <user-modal
-        :show-modal="showModal"
-        :modal-data="user"
-        @cancel="cancelModal"
-      ></user-modal>
-
-      <!-- <nav aria-label="Page navigation nav-style" class="pagination-wrapper">
-      <ul class="pagination">
-        <li
-          class="page-item"
-          :class="{ disabled: currentPage === 1 }"
-          @click="currentPage > 1 && setCurrentPage(currentPage - 1)"
-        >
-          <a class="page-link" href="#" aria-label="Previous">
-            <i class="mdi mdi-page-first"></i>
-            <i class="mdi mdi-chevron-left"></i>
-            <span class="sr-only">Previous</span>
-          </a>
-        </li>
-        <li
-          class="page-item"
-          :class="{ disabled: currentPage === totalPages }"
-          @click="currentPage < totalPages && setCurrentPage(currentPage + 1)"
-        >
-          <a class="page-link" href="#" aria-label="Next">
-            <i class="mdi mdi-chevron-right"></i>
-            <i class="mdi mdi-page-last"></i>
-            <span class="sr-only">Next</span>
-          </a>
-        </li>
-      </ul>
-    </nav> -->
-      <!-- <div class="pagination-wrapper">
-      <label for="rowsPerPage">Rows per page: </label>
-      <select
-        class="rows-per-page"
-        v-model="rowsPerPage"
-        @change="changeRowsPerPage"
-      >
-        <option
-          v-for="option in [5, 10, 20, 50, 100]"
-          :key="option"
-          :value="option"
-        >
-          {{ option }}
-        </option>
-      </select>
-      <span class="pl-2 pr-2">{{ pageDisplay }}</span>
-    </div> -->
-    </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
+    <user-modal
+      :show-modal="showModal"
+      :modal-data="user"
+      @cancel="cancelModal"
+      :cannotUpdateRole="false"
+    ></user-modal>
+   
+
+    </div>
 </template>
 
 <script>
@@ -180,16 +145,37 @@ export default {
       currentPage: 1,
       rowsPerPage: 10,
       selected: [],
-      showModal: false,
-      user: [],
+      showModal:false,
+      user:[],
+      // filteredUsers:[]
     };
   },
+//   created() {
+//   this.filteredUsers = this.users.results;
+// },
   computed: {
+
+    filterEmployees() {
+      let users = {...this.users}
+      
+    if (this.searchTerm === '') 
+      return this.users 
+      
+     users.results = users.results.filter((user) => {
+        const fullName = `${user.first_name} ${user.last_name}`;
+        const searchName = this.searchTerm.toLowerCase().trim();
+        return fullName.toLowerCase().includes(searchName);
+      });
+    
+    console.log(this.searchTerm, users)
+    return users
+  },
     isLoading() {
       // Return true if the users data is still loading
       // Replace this with the actual loading state from your store
       return this.$store.state.loading;
     },
+
     pageDisplay() {
       if (!this.users && this.users == undefined) {
         return 0; // Return 0 if users is null or undefined
@@ -205,13 +191,11 @@ export default {
       if (!this.users && this.users == undefined) {
         return []; // Return an empty array if users is null or undefined
       }
-
+    
       const start = (this.currentPage - 1) * this.rowsPerPage;
       const end = start + this.rowsPerPage;
-      if (this.users.results != undefined) {
-        return this.users.results.slice(start, end);
-      } else {
-        return [];
+      if(this.users.results != undefined){
+        return this.filteredUsers.slice(start, end);
       }
     },
     totalPages() {
@@ -228,7 +212,7 @@ export default {
         var selected = [];
 
         if (value) {
-          this.users.forEach(function (user) {
+          this.users.results.forEach(function (user) {
             selected.push(user.id);
           });
         }
@@ -259,16 +243,7 @@ export default {
     cancelModal2() {
       this.showModal2 = false;
     },
-    filterEmployees() {
-      this.filteredEmployees = this.users.results.filter((user) => {
-        const fullName = `${user.first_name} ${user.last_name}`;
-        const searchName = this.searchTerm.toLowerCase().trim();
-        return fullName.toLowerCase().includes(searchName);
-      });
-    },
-    handleSearch() {
-      this.filterEmployees();
-    },
+  
     enableSearch() {
       this.searchMode = true;
     },

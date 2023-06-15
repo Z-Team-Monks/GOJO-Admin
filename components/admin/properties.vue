@@ -5,22 +5,8 @@
     <main class="s-layout__content">
       <div class="row m-5">
         <!-- <tabs class="nav-pills nav-fill m-3" :data="tabsData0"></tabs> -->
-        <div class="col-sm-4" v-for="content in cardContent" :key="content.id">
-          <card :content="content" />
-        </div>
-
-        <div class="col-12 mt-5 mb-4">
-          <h5>Properties</h5>
-          <tabs
-            @tabUpdated="handleTabUpdate"
-            class="nav-pills nav-fill"
-            :data="tabsData"
-          ></tabs>
-          <div class="tab-content">
-            <div class="tab-pane fade show active" id="all">
-              <Table :properties="filteredProperties" :columns="columns" />
-            </div>
-          </div>
+        <div class="col-sm-4 mb-4" v-for="content in cardContent" :key="content.id">
+          <card :content="content" :report="getRepo" />
         </div>
         <div class="row">
           <div class="col-sm-8"><h5>Categories</h5></div>
@@ -135,6 +121,19 @@
             </div>
           </div>
         </transition-group>
+        <div class="col-12 mt-5 mb-4">
+          <h5>Properties</h5>
+          <tabs
+            @tabUpdated="handleTabUpdate"
+            class="nav-pills nav-fill"
+            :data="tabsData"
+          ></tabs>
+          <div class="tab-content">
+            <div class="tab-pane fade show active" id="all">
+              <Table :properties="filteredProperties" :columns="columns" />
+            </div>
+          </div>
+        </div>
       </div>
     </main>
   </div>
@@ -188,24 +187,25 @@ export default {
 
       cardContent: [
         {
-          id: "1",
-          title: "Total Properties",
-          icon: "mdi mdi-account-multiple-outline mdi-48px card-i",
-          value: "93230",
-          subscript: "+3,840 (26,80%)",
-        },
-        {
-          id: "2",
+          id: "approved",
           title: "Approved Properties",
-          icon: "mdi mdi mdi-eye-outline mdi-48px card-i",
-          value: "58000",
+          icon: "mdi mdi mdi-check-circle-outline mdi-48px card-i",
+          page: "propp",
           subscript: "+210K (16,20%)",
         },
         {
-          id: "3",
+          id: "pending",
+          title: "Pending Properties",
+          icon: "mdi mdi-timer-sand mdi-48px card-i",
+          page: "propp",
+          subscript: "+3,840 (26,80%)",
+        },
+
+        {
+          id: "rejected",
           title: "Rejected Properties",
-          icon: "mdi mdi-chart-bar mdi-48px card-i",
-          value: "12232",
+          icon: "mdi mdi-cancel mdi-48px card-i",
+          page: "propp",
           subscript: "-2400 (0.74%)",
         },
       ],
@@ -214,6 +214,10 @@ export default {
           id: "all",
           title: "All",
           active: true,
+        },
+        {
+          id: "pending",
+          title: "Pending",
         },
         {
           id: "approved",
@@ -252,6 +256,7 @@ export default {
       "loading",
       "categories",
       "facilities",
+      "getRepo",
     ]),
     filteredProperties() {
       if (this.filter == "all") return this.properties;
@@ -263,8 +268,12 @@ export default {
       if (this.filter == "approved") {
         properties.results = properties.results?.filter((p) => p.status == 1);
       }
+      if (this.filter == "pending") {
+        properties.results = properties.results?.filter((p) => p.status == 0);
+      }
       return properties;
     },
+      
   },
 
   methods: {
@@ -273,6 +282,7 @@ export default {
       "fetchProperties",
       "fetchCategories",
       "fetchFacilities",
+      "fetchPropertiesReport",
     ]),
     editCategory(id) {
       // your edit logic here
@@ -302,6 +312,7 @@ export default {
     this.fetchProperties();
     this.fetchCategories();
     this.fetchFacilities();
+    this.fetchPropertiesReport();
   },
 };
 </script>
