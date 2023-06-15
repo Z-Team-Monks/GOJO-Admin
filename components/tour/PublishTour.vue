@@ -20,16 +20,12 @@
       <h5>Here is the link to your hosted tour</h5>
       <div v-if="tourPublished" class="d-flex align-items-center">
         <div class="border border-1 px-3 py-2 rounded rounded-2">
-          <a :href="publishedURL" class="text-dark">{{ publishedURL }}</a>
-        </div>
-
-        <div class="d-flex justify-content-center align-items-center">
-          <i
-            @click="copyUrl"
-            role="button"
-            class="mdi mdi-content-copy ml-2 mdi-36px cursor-pointer"
-          >
-            <p v-if="copied">Copied!</p></i
+          <a
+            @click="dismissModal"
+            target="_blank"
+            :href="publishedURL"
+            class="text-dark"
+            >{{ publishedURL }}</a
           >
         </div>
       </div>
@@ -65,9 +61,8 @@ export default {
     },
   },
   methods: {
-    copyUrl() {
-      navigator.clipboard.writeText(this.publishedURL);
-      this.copied = true;
+    dismissModal() {
+      this.$emit("publishDismiss");
       if (this.timer) {
         clearInterval(this.timer);
       }
@@ -92,6 +87,11 @@ export default {
         colors: this.colors,
       });
     },
+  },
+  beforeDestroy() {
+    if (this.timer) {
+      clearInterval(this.timer);
+    }
   },
 };
 </script>

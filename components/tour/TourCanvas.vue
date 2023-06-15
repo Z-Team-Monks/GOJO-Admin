@@ -26,7 +26,6 @@
         title="Select Tour"
         hide-footer
         hide-header
-        
       >
         <div class="p-3 w-100 modal-body">
           <div
@@ -102,7 +101,7 @@
         hide-footer
         hide-header
       >
-        <publish-tour />
+        <publish-tour @publishDismiss="showPublish = false" />
       </b-modal>
     </div>
     <div
@@ -479,6 +478,7 @@ export default {
     },
   },
   mounted() {
+    this.setHostspots([]);
     this.viewer = new Viewer({
       container: this.$refs.viewRef,
       panorama: this.hotspotNodes.find((h) => h.id == this.initialView?.id)

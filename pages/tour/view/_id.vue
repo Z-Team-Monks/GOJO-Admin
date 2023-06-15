@@ -56,18 +56,22 @@ export default {
   async mounted() {
     this.hasError = false;
     const tourId = this.$route.params.id;
-    console.log(tourId);
     if (!tourId) {
       this.$router.push("/dashboard/properties");
     }
     await this.fetchTour(tourId);
     let currentPanorama = null;
+
     if (this.initialView && !!this.hotspotNodes.length) {
       currentPanorama = this.hotspotNodes.find(
         (node) => node.id == this.initialView
-      ).panorama;
+      )?.panorama;
+
+      if (!currentPanorama) {
+        currentPanorama = this.hotspotNodes[0]?.panorama;
+      }
     } else if (!!this.hotspotNodes.length) {
-      currentPanorama = this.hotspotNodes[0].panorama;
+      currentPanorama = this.hotspotNodes[0]?.panorama;
     }
 
     this.viewer = new Viewer({

@@ -5,7 +5,7 @@
     <main class="s-layout__content">
       <div class="row m-5">
         <div class="col-sm-4" v-for="(content, i) in cardContent" :key="i">
-          <card :content="content"  :report="getUsersReport"/>
+          <card :content="content" :report="getUsersReport" />
         </div>
         <div class="col-12 mt-5">
           <div class="row border-bottom justify-content-between">
@@ -156,11 +156,11 @@ export default {
     this.currentUser;
     if (process.browser) {
       this.fetchUserData();
-      this.fetchReport()
+      this.fetchReport();
     }
   },
   computed: {
-    ...mapGetters("auth", ["isAuthenticated", "getUsers", 'getUsersReport']),
+    ...mapGetters("auth", ["isAuthenticated", "getUsers", "getUsersReport"]),
     usersFiltered() {
       if (this.filter == "all") return this.getUsers;
       const users = { ...this.getUsers };
@@ -175,7 +175,7 @@ export default {
   },
 
   methods: {
-    ...mapActions("auth", ["fetchUser",  "fetchReport"]),
+    ...mapActions("auth", ["fetchUser", "fetchReport"]),
     handleTabUpdate(tab) {
       this.filter = tab;
     },

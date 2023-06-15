@@ -60,15 +60,17 @@ export default {
   },
 
   publicRuntimeConfig: {
-    localUrl: "http://localhost:3000",
-    baseUrl: process.env.BASE_URL || "http://34.163.240.198/api/v1",
+    localUrl: process.env.LOCAL_IP
+      ? `http://${process.env.LOCAL_IP}:3000`
+      : "http://localhost:3000",
+    baseUrl: process.env.BASE_URL || "http://34.163.18.207:8000/api/v1",
   },
   privateRuntimeConfig: {},
 
-  // server: {
-  //   host: "192.168.149.134",
-  //   port: "3000",
-  // },
+  server: {
+    host: process.env.LOCAL_IP,
+    port: "3000",
+  },
 };
 
 // http://192.168.28.207:8000/api/v1

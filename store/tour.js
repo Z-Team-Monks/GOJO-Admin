@@ -219,6 +219,8 @@ export const actions = {
     }
   },
   async postTour({ commit, rootState }, { data, id }) {
+    commit("UPDATE_PUBLISH_STATUS", false);
+    commit("UPDATE_PUBLISH_URL", null);
     commit("SET_LOADING", true);
     try {
       const URL = `${this.$config.baseUrl}/properties/${id}/virtual_tour/`;
@@ -237,6 +239,7 @@ export const actions = {
         },
       });
       const res = resp.data;
+      console.log(P_URL);
       commit("UPDATE_PUBLISH_STATUS", true);
       commit("UPDATE_PUBLISH_URL", P_URL);
     } catch (error) {

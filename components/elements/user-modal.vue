@@ -51,6 +51,7 @@
                 placeholder="Password"
                 v-model="localModalData.password"
                 required
+                type="password"
               ></b-form-input>
             </b-form-group>
           </div>
@@ -101,7 +102,7 @@
             <span class="btn-label"><i class="mdi mdi-check"></i></span>Save
           </b-button>
           <b-button
-          v-if="createUser == true"
+            v-if="createUser == true"
             variant="success"
             @click="createUserMethod"
             class="btn-labeled"
@@ -143,8 +144,6 @@ export default {
         { value: false, text: "Deactivate" },
       ],
       options0: [
-        { value: 1, text: "Tenant" },
-        { value: 2, text: "Landlord" },
         { value: 3, text: "Financial Manager" },
         { value: 4, text: "Listing Manager" },
         { value: 5, text: "General Manager" },
@@ -173,20 +172,17 @@ export default {
   },
   methods: {
     updateUser() {
-      console.log(this.cannotUpdateRole)
-      if(!this.cannotUpdateRole){
-        console.log(this.cannotUpdateRole)
+      console.log(this.cannotUpdateRole);
+      if (!this.cannotUpdateRole) {
+        console.log(this.cannotUpdateRole);
         this.$store.dispatch("auth/updateUser", this.localModalData); // Use the local copy to update the user
-      
-      }
-      else{
-        console.log(this.cannotUpdateRole)
+      } else {
+        console.log(this.cannotUpdateRole);
         this.$store.dispatch("auth/updateCurrentUser", this.localModalData); // Use the local copy to update the user
       }
       if (this.loading == true) {
         this.$emit("cancel");
       }
-      
     },
     createUserMethod() {
       this.$store.dispatch("auth/createUser", this.localModalData); // Use the local copy to update the user
