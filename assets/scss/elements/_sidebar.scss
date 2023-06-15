@@ -8,14 +8,14 @@
    float: right !important;
    right: 0 !important;
  }
- 
+
  .s-layout__content {
     display: flex;
     justify-content: center;
     flex: 1;
     height: 100%;
  }
- 
+
  /* Sidebar */
  .s-sidebar__trigger {
     z-index: 2;
@@ -26,13 +26,13 @@
     height: 4em;
     background: #edeff2;
  }
- 
+
  .s-sidebar__trigger > i {
     display: inline-block;
     margin: 1.5em 0 0 1.5em;
-    color:  #1BB55C;;
+    color:  #1BB55C;
  }
- 
+
  .s-sidebar__nav {
     position: fixed;
     top: 2rem;
@@ -40,19 +40,19 @@
     overflow: hidden;
     transition: all .3s ease-in;
     width: 5em;
-    height: 37%;
+    height: 350px;
     background: white;
     color: #1BB55C;
     border-radius: 1rem;
  }
- 
+
  .s-sidebar__nav:hover,
  .s-sidebar__nav:focus,
  .s-sidebar__trigger:focus + .s-sidebar__nav,
  .s-sidebar__trigger:hover + .s-sidebar__nav {
     left: 0;
  }
- 
+
  .s-sidebar__nav ul {
     position: absolute;
     top: 4em;
@@ -60,30 +60,35 @@
     margin: 0;
     padding: 0;
     width: 5em;
+    display: flex;
+    flex-direction: column;
+    margin-top: auto;
+    height: 100%;
+    justify-content: center;
  }
- 
+
  .s-sidebar__nav ul li {
     width: 100%;
  }
- 
+
  .s-sidebar__nav-link {
     position: relative;
     display: inline-block;
     width: 100%;
     height: 4em;
  }
- 
+
  .s-sidebar__nav-link em {
     position: absolute;
     top: 50%;
     left: 4em;
     transform: translateY(-50%);
  }
- 
+
  .s-sidebar__nav-link:hover {
    transform: scale(1.1);
  }
- 
+
  .s-sidebar__nav-link > i {
     position: absolute;
     top: 0;
@@ -92,30 +97,30 @@
     width: 4em;
     height: 4em;
  }
- 
+
  .s-sidebar__nav-link > i::before {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
  }
- 
+
  /* Mobile First */
  @media (min-width: 42em) {
     .s-layout__content {
        margin-left: 4em;
     }
-    
+
     /* Sidebar */
     .s-sidebar__trigger {
        width: 4em;
     }
-    
+
     .s-sidebar__nav {
        width: 4em;
        left: 0;
     }
-    
+
     .s-sidebar__nav:hover,
     .s-sidebar__nav:focus,
     .s-sidebar__trigger:hover + .s-sidebar__nav,
@@ -123,22 +128,22 @@
        width: 5em;
     }
  }
- 
+
  @media (min-width: 68em) {
     .s-layout__content {
        margin-left: 5em;
     }
-    
+
     /* Sidebar */
     .s-sidebar__trigger {
        display: none
     }
-    
+
     .s-sidebar__nav {
        width: 5em;
        left: 1rem;
     }
-    
+
     .s-sidebar__nav ul {
        top: 1.3em;
     }

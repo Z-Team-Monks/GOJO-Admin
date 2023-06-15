@@ -44,9 +44,8 @@ export default {
       this.dropdownOpen = !this.dropdownOpen;
     },
     handleLogout() {
-      this.isDropdownOpen = false;
-      // Dispatch the logout action
       this.$store.dispatch("auth/logout");
+      this.isDropdownOpen = false;
     },
   },
 };

@@ -61,6 +61,14 @@ export const mutations = {
       state.allFacilities.splice(index, 1, updatedFacility);
     }
   },
+  UPDATE_PROPERTY_STATUS(state, data) {
+    state.properties.results = state.properties.results.map((p) => {
+      if (p.id == data.id) {
+        return { ...p, status: data.status };
+      }
+      return p;
+    });
+  },
 };
 
 export const actions = {
@@ -100,13 +108,12 @@ export const actions = {
           headers: {
             Authorization: `Token ${rootState.auth.token}`,
             "Content-Type": "multipart/ form-data",
-            // 'Content-Type': 'application/json',
           },
         }
       );
       // Check if the response status is OK
       if (res.data) {
-        commit("SET_PROPERTIES", res.data);
+        window.location.reload();
       } else {
         throw new Error(res.data.message || "Failed to get properties");
       }
@@ -114,6 +121,31 @@ export const actions = {
       console.error("There was a problem with the fetch operation: ", error);
     }
   },
+
+  async updateProperty({ commit, rootState }, { status, id }) {
+    commit("SET_LOADING", true);
+    try {
+      const res = await axios.patch(
+        `${this.$config.baseUrl}/properties/${id}/`,
+        { status },
+        {
+          headers: {
+            Authorization: `Token ${rootState.auth.token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      // Check if the response status is OK
+      if (res.data) {
+        commit("UPDATE_PROPERTY_STATUS", res.data);
+      } else {
+        throw new Error(res.data.message || "Failed to update properties");
+      }
+    } catch (error) {
+      console.error("There was a problem with the fetch operation: ", error);
+    }
+  },
+
   async fetchCategories({ commit }) {
     try {
       const response = await fetch(
@@ -251,9 +283,7 @@ export const actions = {
     }
   },
   async updateFacility({ commit, rootState }, name) {
-    console.log(name);
     const url = `${this.$config.baseUrl}/properties/facilities/${name.name.id}/`;
-    console.log(url);
     const response = await fetch(url, {
       method: "PATCH",
       headers: {

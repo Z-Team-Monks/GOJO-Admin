@@ -10,7 +10,11 @@
         <div class="col-12 mt-5">
           <div class="row border-bottom justify-content-between">
             <div class="col-sm-8">
-              <tabs class="nav-pills nav-fill" :data="tabsData"></tabs>
+              <tabs
+                @tabUpdated="handleTabUpdate"
+                class="nav-pills nav-fill"
+                :data="tabsData"
+              ></tabs>
             </div>
             <div class="col-sm-4">
               <b-button
@@ -33,7 +37,7 @@
           <div class="tab-content pt-3">
             <div class="tab-pane fade show active" id="all">
               <Table
-                :users="userList"
+                :users="filteredUsers"
                 :show-modal="showModal"
                 :columns="columns"
               />
@@ -137,14 +141,15 @@ export default {
           active: true,
         },
         {
-          id: "activee",
+          id: "active",
           title: "Active",
         },
         {
-          id: "deactivee",
+          id: "deactive",
           title: "Deactive",
         },
       ],
+      filter: "all",
     };
   },
   created() {
@@ -155,20 +160,24 @@ export default {
   },
   computed: {
     ...mapGetters("auth", ["isAuthenticated", "getUsers"]),
-    userList: {
-      get() {
-        return this.getUsers;
-      },
-      set(value) {
-        // You can handle the setter logic if required
-        // For example, if you want to update the userList in the store
-        this.$store.commit("auth/setUser", value);
-      },
+    filteredUsers() {
+      if (this.filter == "all") return this.getUsers;
+      const users = { ...this.getUsers };
+      if (this.filter == "active") {
+        users.results = users.results?.filter((p) => p.is_active);
+      }
+      if (this.filter == "deactive") {
+        users.results = users.results?.filter((p) => !p.is_active);
+      }
+      return users;
     },
   },
 
   methods: {
     ...mapActions("auth", ["fetchUser"]),
+    handleTabUpdate(tab) {
+      this.filter = tab;
+    },
     fetchUserData() {
       if (this.isAuthenticated) {
         this.fetchUser()

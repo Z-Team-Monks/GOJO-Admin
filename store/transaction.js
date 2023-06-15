@@ -19,7 +19,7 @@ export const actions = {
     commit("SET_LOADING", true);
     try {
       const token = rootState.auth.token; // get token from local storage
-      const res = await fetch("http://34.163.240.198/api/v1/transactions/", {
+      const res = await fetch(`${this.$config.baseUrl}/transactions/`, {
         headers: {
           Authorization: `Token ${token}`, // attach token to the request
         },

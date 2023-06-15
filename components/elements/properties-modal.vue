@@ -72,8 +72,12 @@
           <div class="image-container">
             <div class="image-display">
               <div class="featured-image">
-                <img v-if="images.length != 0" :src="images[0]" alt="Featured Image" />
-                <div v-else class="upload-img"><h5> Upload Images</h5></div>
+                <img
+                  v-if="images.length != 0"
+                  :src="images[0]"
+                  alt="Featured Image"
+                />
+                <div v-else class="upload-img"><h5>Upload Images</h5></div>
               </div>
               <div
                 class="thumbnail-images d-flex align-items-center justify-content-center"
@@ -190,7 +194,7 @@ export default {
     return {
       localShowModal: false,
       localModalData: {},
-      featuredImage2:"",
+      featuredImage2: "",
       images: [],
       maxLength: 20,
       nameState: true,
@@ -221,8 +225,10 @@ export default {
     modalData: {
       handler(newValue) {
         this.localModalData = { ...newValue }; // Makes a local copy of the prop
+        this.selectedOption = newValue.status;
       },
-      immediate: true, // This ensures the handler is called right after the component is created
+      immediate: true,
+      // This ensures the handler is called right after the component is created
     },
   },
   computed: {
@@ -237,16 +243,14 @@ export default {
       },
     },
   },
-  mounted() {
-    this.selectedOption = this.modalData.status;
-  },
   methods: {
     ...mapActions("properties", ["postProperty"]),
     updateStatus() {
-      this.$store.dispatch("properties/updateStatus", {
+      this.$store.dispatch("properties/updateProperty", {
         status: this.selectedOption,
         id: this.modalData.id,
       });
+      this.$emit("cancel");
     },
     handleFiles(event) {
       const files = Array.from(event.target.files);
@@ -255,7 +259,7 @@ export default {
         const reader = new FileReader();
         reader.onload = (e) => this.images.push(e.target.result);
         reader.readAsDataURL(file);
-        this.featuredImage2 = this.images[0]
+        this.featuredImage2 = this.images[0];
       });
     },
     setFeaturedImage(image) {
@@ -284,15 +288,15 @@ export default {
         formData.append(`image-${idx}`, img);
       });
       this.postProperty({ data: formData, id: this.modalData.id });
-      this.$emit("save");
+      this.$emit("cancel");
     },
   },
 };
 </script>
 
-<style  scoped>
-.upload-img{
-  height:480px !important;
+<style scoped>
+.upload-img {
+  height: 480px !important;
   align-items: center;
 }
 </style>

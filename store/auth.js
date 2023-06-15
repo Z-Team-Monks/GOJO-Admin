@@ -271,6 +271,32 @@ export const actions = {
       commit("setDeleteError", error.message);
     }
   },
+  async changePassword({ commit, state }, { oldPassword, newPassword }) {
+    const token = state.token;
+    const userId = state.currentUser.id;
+    const url = `${this.$config.baseUrl}/users/${userId}/change_password/`;
+    const options = {
+      method: "POST",
+      body: JSON.stringify({
+        oldPassword,
+        newPassword,
+      }),
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json",
+      },
+    };
+    try {
+      const response = await fetch(url, options);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      commit("setUpdateSuccess", "password updated");
+    } catch (error) {
+      commit("setUpdateSuccess", "password update failed");
+    }
+  },
+
   // async fetchCurrentUser({ commit, state }) {
   //   return new Promise(async (resolve, reject) => {
   //       const token = state.token;

@@ -15,7 +15,10 @@
       </thead>
       <!-- {{ transactions.results }} -->
       <tbody>
-        <tr v-for="transaction in localTransactions.results" :key="transaction.id">
+        <tr
+          v-for="transaction in localTransactions.results"
+          :key="transaction.id"
+        >
           <td style="width: 3%">
             <input
               type="checkbox"
@@ -25,33 +28,34 @@
             />
           </td>
           <td>
-            
             {{ transaction.property_title }}
           </td>
-          
+
           <td>{{ transaction.payment_date }}</td>
           <td>
             {{ transaction.amount }}
           </td>
           <td>
-           
-             {{ transaction.status}}
-           
+            {{ transaction.status }}
           </td>
           <td>
             <div class="row">
-          <!-- <div class="col-auto">
+              <!-- <div class="col-auto">
             <b-button variant="danger" @click="showM2(transaction, 'decline')" class="btn-labeled">
               <span class="btn-label"><i class="mdi mdi-close"></i></span>Decline
             </b-button>
           </div> -->
-          <div class="col-auto ">
-            <b-button variant="success" class="btn-labeled float-right" @click="showM2(transaction)">
-              <span class="btn-label"><i class="mdi mdi-check" ></i></span>Release
-            </b-button>
-          </div>
-        </div>
-        
+              <div class="col-auto">
+                <b-button
+                  variant="success"
+                  class="btn-labeled float-right"
+                  @click="showM2(transaction)"
+                >
+                  <span class="btn-label"><i class="mdi mdi-check"></i></span
+                  >Release
+                </b-button>
+              </div>
+            </div>
           </td>
         </tr>
       </tbody>
@@ -62,7 +66,7 @@
       @cancel="cancelModal"
       :action="action"
     ></confirmation-modal>
-    <nav aria-label="Page navigation nav-style" class="pagination-wrapper">
+    <!-- <nav aria-label="Page navigation nav-style" class="pagination-wrapper">
       <ul class="pagination">
         <li
           class="page-item"
@@ -104,15 +108,15 @@
         </option>
       </select>
       <span class="pl-2 pr-2">{{ pageDisplay }}</span>
-    </div>
+    </div> -->
   </div>
 </template>
-    
-    <script>
-    import { mapActions } from 'vuex';
-    import ConfirmationModal from '../elements/confirmation-modal.vue';
+
+<script>
+import { mapActions } from "vuex";
+import ConfirmationModal from "../elements/confirmation-modal.vue";
 export default {
-  components:{ConfirmationModal},
+  components: { ConfirmationModal },
   props: {
     transactions: {
       Type: Array,
@@ -128,19 +132,19 @@ export default {
       reverse: false,
       currentPage: 1,
       rowsPerPage: 10,
-      selectedOption:'',
-      showModal:false,
-      action:'',
-      status:1,
+      selectedOption: "",
+      showModal: false,
+      action: "",
+      status: 1,
       search: "",
       selected: [],
       transaction: [],
       localTransactions: this.transactions,
       options: [
-        { value: 1, text: 'Withdraw Pending' },
-        { value: 3, text: 'Approved' },
-        { value: 2, text: 'Declined' }
-      ]
+        { value: 1, text: "Withdraw Pending" },
+        { value: 3, text: "Approved" },
+        { value: 2, text: "Declined" },
+      ],
     };
   },
   // watch: {
@@ -198,18 +202,21 @@ export default {
     },
   },
   methods: {
-    ...mapActions('transaction', ['patchTransaction']),
+    ...mapActions("transaction", ["patchTransaction"]),
     showM2(transaction, action) {
-      console.log(transaction)
-        this.showModal = true
-        this.action = action
-        this.transaction = transaction
+      console.log(transaction);
+      this.showModal = true;
+      this.action = action;
+      this.transaction = transaction;
     },
-    cancelModal(){
-      this.showModal = false
+    cancelModal() {
+      this.showModal = false;
     },
     onChange(transaction) {
-      this.patchTransaction({ id: transaction.id, transactionData: { status: this.selectedOption } });
+      this.patchTransaction({
+        id: transaction.id,
+        transactionData: { status: this.selectedOption },
+      });
     },
     setCurrentPage(page) {
       this.currentPage = page;
@@ -228,4 +235,3 @@ export default {
   },
 };
 </script>
-    

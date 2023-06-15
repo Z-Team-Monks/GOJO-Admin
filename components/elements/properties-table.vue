@@ -97,7 +97,7 @@
       :modal-data="selectedProperty"
       @cancel="cancelModal"
     ></properties-modal>
-    <nav aria-label="Page navigation nav-style" class="pagination-wrapper">
+    <!-- <nav aria-label="Page navigation nav-style" class="pagination-wrapper">
       <ul class="pagination">
         <li
           class="page-item"
@@ -121,8 +121,8 @@
           </a>
         </li>
       </ul>
-    </nav>
-    <div class="pagination-wrapper">
+    </nav> -->
+    <!-- <div class="pagination-wrapper">
       <label for="rowsPerPage">Rows per page: </label>
       <select
         class="rows-per-page"
@@ -138,7 +138,7 @@
         </option>
       </select>
       <span class="pl-2 pr-2">{{ pageDisplay }}</span>
-    </div>
+    </div> -->
   </div>
 </template>
 

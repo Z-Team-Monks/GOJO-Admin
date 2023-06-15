@@ -98,7 +98,7 @@
                         <b-form-input
                           id="old-password-input"
                           placeholder="Old Password"
-                          v-model="name"
+                          v-model="oldPassword"
                           :state="nameState"
                           required
                         ></b-form-input>
@@ -110,7 +110,7 @@
                         <b-form-input
                           id="new-password-input"
                           placeholder="New Password"
-                          v-model="name"
+                          v-model="newPassword"
                           :state="nameState"
                           required
                         ></b-form-input>
@@ -142,7 +142,11 @@
                         </b-button>
                       </div>
                       <div class="col-auto">
-                        <b-button variant="success" class="btn-labeled">
+                        <b-button
+                          @click="updatePassword"
+                          variant="success"
+                          class="btn-labeled"
+                        >
                           <span class="btn-label"
                             ><i class="mdi mdi-check"></i></span
                           >Save
@@ -331,6 +335,8 @@ export default {
       name: "",
       user: [],
       nameState: true,
+      oldPassword: "",
+      newPassword: "",
       currentUser1: {
         profilePic: "https://cdn-icons-png.flaticon.com/512/219/219988.png",
       },
@@ -366,7 +372,7 @@ export default {
     },
   },
   methods: {
-    // ...mapActions('auth', ['fetchCurrentUser']),
+    ...mapActions("auth", ["changePassword"]),
     toggleDropdown() {
       this.dropdownOpen = !this.dropdownOpen;
     },
@@ -390,6 +396,12 @@ export default {
     },
     cancelModal() {
       this.showModal = false;
+    },
+    updatePassword() {
+      this.changePassword({
+        oldPassword: this.oldPassword,
+        newPassword: this.newPassword,
+      });
     },
   },
 };

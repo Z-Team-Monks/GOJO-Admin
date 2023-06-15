@@ -20,7 +20,9 @@
           <div class="tab-content p-3">
             <div class="tab-pane fade show active" id="all">
               <div v-if="loading">Loading...</div>
-      <div v-else-if="getTransactions.length === 0">No transaction records</div>
+              <div v-else-if="getTransactions.length === 0">
+                No transaction records
+              </div>
               <Table :transactions="getTransactions" :columns="columns" />
             </div>
           </div>
@@ -39,7 +41,7 @@ import Sidebar from "../elements/sidebar.vue";
 import navbar from "../elements/navbar.vue";
 import Calender from "../elements/calender.vue";
 import Table from "../elements/transaction-table.vue";
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters } from "vuex";
 
 export default {
   components: {
@@ -56,7 +58,13 @@ export default {
 
   data() {
     return {
-      columns: ["Property", "Payment Date", "Amount", "Payment Status", "Action"],
+      columns: [
+        "Property",
+        "Payment Date",
+        "Amount",
+        "Payment Status",
+        "Action",
+      ],
       // transaction: [
       //   {
       //     id: "1",
@@ -121,16 +129,8 @@ export default {
       tabsData: [
         {
           id: "all",
-          title: "All",
+          title: "Withdraw Requests",
           active: true,
-        },
-        {
-          id: "approved",
-          title: "Approved",
-        },
-        {
-          id: "rejected",
-          title: "Rejected",
         },
       ],
       chartData: {
@@ -178,11 +178,11 @@ export default {
   },
   computed: {
     // Map the 'transactions' getter from the 'transaction' Vuex module
-    ...mapGetters('transaction', ['getTransactions','loading']),
+    ...mapGetters("transaction", ["getTransactions", "loading"]),
   },
   methods: {
     // Map the 'getTransactions' action from the 'transaction' Vuex module
-    ...mapActions('transaction', ['fetchTransactions']),
+    ...mapActions("transaction", ["fetchTransactions"]),
   },
   created() {
     // Fetch transactions when the component is created
@@ -191,5 +191,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>
