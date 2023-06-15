@@ -21,7 +21,6 @@
                 v-model="searchTerm"
                 placeholder="Search..."
                 class="search-input"
-               
               />
 
               <i class="mdi mdi-close" @click="disableSearch"></i>
@@ -38,87 +37,82 @@
         </div>
       </div>
     </div>
-    <div v-if="filterEmployees.results">
-      <table v-if="!isLoading && filterEmployees.results.length === 0">
-      <tr >
-        <td class="p-5"> No users found</td>
-      </tr>
-    </table>
-  
-    <table class="table" v-else>
-      <thead>
+    <div v-if="filterEmployees?.results">
+      <table v-if="!isLoading && filterEmployees?.results?.length === 0">
         <tr>
-          <th align="left">
-            <input type="checkbox" v-model="selectAll" />
-          </th>
-          <th v-for="column in columns" :key="column">
-            <span class="colss">
-              {{ column }}
-            </span>
-          </th>
+          <td class="p-5">No users found</td>
         </tr>
-      </thead>
-      <tbody>
-        <tr v-for="user in filterEmployees.results" :key="user.id">
-          <td style="width: 3%">
-            <input type="checkbox" v-model="selected" :value="user.id" number />
-          </td>
-          <td>
-            <img
-              src="https://cdn-icons-png.flaticon.com/512/219/219988.png"
-              class="mr-2"
-              width="40"
-              alt=""
-            />
-            <strong>{{ user.first_name }}</strong>
-          </td>
-          <td>
-            {{
-              user.last_name 
-            }}
-          </td>
-          <td>
-            {{
-              user.phone
-            }}
-          </td>
-          <td v-if="user.role == 1">Tenant</td>
-          <td v-else-if="user.role == 2">Landlord</td>
-          <td v-else-if="user.role == 3">Financial Manager</td>
-          <td v-else-if="user.role == 4">Listing Manager</td>
-          <td v-else>General Manager</td>
-          <td v-if="user.is_active == true">
-            <div class="active-stat text-center">
-              Active
-            </div>
-          </td>
-          <td v-if="user.is_active == false">
-            <div class="deactive-stat text-center">
-             Disabled
-            </div>
-          </td>
-          <td class="row">
-            <div class="col-sm-6 edit-icon mr-1" @click="showM(user)">
-              <i class="mdi mdi-account-edit"></i>
-            </div>
-              
-            <!-- <div class="col-sm-6 delete-icon" @click="showM2(user)">
+      </table>
+
+      <table class="table" v-else>
+        <thead>
+          <tr>
+            <th align="left">
+              <input type="checkbox" v-model="selectAll" />
+            </th>
+            <th v-for="column in columns" :key="column">
+              <span class="colss">
+                {{ column }}
+              </span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="user in filterEmployees?.results" :key="user.id">
+            <td style="width: 3%">
+              <input
+                type="checkbox"
+                v-model="selected"
+                :value="user.id"
+                number
+              />
+            </td>
+            <td>
+              <img
+                src="https://cdn-icons-png.flaticon.com/512/219/219988.png"
+                class="mr-2"
+                width="40"
+                alt=""
+              />
+              <strong>{{ user.first_name }}</strong>
+            </td>
+            <td>
+              {{ user.last_name }}
+            </td>
+            <td>
+              {{ user.phone }}
+            </td>
+            <td v-if="user.role == 1">Tenant</td>
+            <td v-else-if="user.role == 2">Landlord</td>
+            <td v-else-if="user.role == 3">Financial Manager</td>
+            <td v-else-if="user.role == 4">Listing Manager</td>
+            <td v-else>General Manager</td>
+            <td v-if="user.is_active == true">
+              <div class="active-stat text-center">Active</div>
+            </td>
+            <td v-if="user.is_active == false">
+              <div class="deactive-stat text-center">Disabled</div>
+            </td>
+            <td class="row">
+              <div class="col-sm-6 edit-icon mr-1" @click="showM(user)">
+                <i class="mdi mdi-account-edit"></i>
+              </div>
+
+              <!-- <div class="col-sm-6 delete-icon" @click="showM2(user)">
               <i class="mdi mdi-delete"></i>
             </div> -->
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
     <user-modal
       :show-modal="showModal"
       :modal-data="user"
       @cancel="cancelModal"
       :cannotUpdateRole="false"
     ></user-modal>
-   
-
-    </div>
+  </div>
 </template>
 
 <script>
@@ -145,31 +139,28 @@ export default {
       currentPage: 1,
       rowsPerPage: 10,
       selected: [],
-      showModal:false,
-      user:[],
+      showModal: false,
+      user: [],
       // filteredUsers:[]
     };
   },
-//   created() {
-//   this.filteredUsers = this.users.results;
-// },
+  //   created() {
+  //   this.filteredUsers = this.users.results;
+  // },
   computed: {
-
     filterEmployees() {
-      let users = {...this.users}
-      
-    if (this.searchTerm === '') 
-      return this.users 
-      
-     users.results = users.results.filter((user) => {
+      let users = { ...this.users };
+
+      if (this.searchTerm === "") return this.users;
+
+      users.results = users?.results?.filter((user) => {
         const fullName = `${user.first_name} ${user.last_name}`;
         const searchName = this.searchTerm.toLowerCase().trim();
         return fullName.toLowerCase().includes(searchName);
       });
-    
-    console.log(this.searchTerm, users)
-    return users
-  },
+
+      return users;
+    },
     isLoading() {
       // Return true if the users data is still loading
       // Replace this with the actual loading state from your store
@@ -191,10 +182,10 @@ export default {
       if (!this.users && this.users == undefined) {
         return []; // Return an empty array if users is null or undefined
       }
-    
+
       const start = (this.currentPage - 1) * this.rowsPerPage;
       const end = start + this.rowsPerPage;
-      if(this.users.results != undefined){
+      if (this.users?.results != undefined) {
         return this.filteredUsers.slice(start, end);
       }
     },
@@ -212,7 +203,7 @@ export default {
         var selected = [];
 
         if (value) {
-          this.users.results.forEach(function (user) {
+          this.users?.results?.forEach(function (user) {
             selected.push(user.id);
           });
         }
@@ -243,7 +234,7 @@ export default {
     cancelModal2() {
       this.showModal2 = false;
     },
-  
+
     enableSearch() {
       this.searchMode = true;
     },
