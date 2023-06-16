@@ -10,8 +10,12 @@
 
         <div class="col-12 mt-5">
           <div class="row">
-            <div class="col-sm-6"><BarChart :options="options" :chartData="chartData" /></div>
-            <div class="col-sm-6"><LineChart :options="options" :chartData="chartData" /></div>
+            <div class="col-sm-6">
+              <BarChart :options="options" :chartData="chartData" />
+            </div>
+            <div class="col-sm-6">
+              <LineChart :options="options" :chartData="chartData" />
+            </div>
             <!-- <div class="col-sm-5"><calender /></div> -->
           </div>
         </div>
@@ -20,8 +24,7 @@
           <div class="tab-content p-3">
             <div class="tab-pane fade show active" id="all">
               <div v-if="loading">Loading...</div>
-              
-            
+
               <div v-else-if="getTransactions.results.length === 0">
                 No transaction records
               </div>
@@ -102,20 +105,13 @@ export default {
         },
       ],
       chartData: {
-        labels: [
-          "Total Cash Flow",
-          "Current Balance",
-          "Released",
-          "Approved",
-          "Pending",
-        ],
+        labels: ["Approved", "Current Balance", "Released", "Pending"],
         datasets: [
           {
             label: "Transaction Report",
             fill: false,
             data: [],
             backgroundColor: [
-              "rgb(255, 99, 132)",
               "rgb(54, 162, 235)",
               "rgb(255, 205, 86)",
               "rgb(54, 162, 35)",
@@ -149,7 +145,10 @@ export default {
       "fetchTransactionsReport",
     ]),
     updateChart() {
-      this.chartData.datasets[0].data = Object.values(this.getReports);
+      if (Object.keys(this.getReports).length) {
+        delete this.getReports["cash_flow"];
+        this.chartData.datasets[0].data = Object.values(this.getReports);
+      }
     },
   },
   created() {

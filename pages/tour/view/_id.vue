@@ -77,7 +77,18 @@ export default {
     this.viewer = new Viewer({
       container: this.$refs.viewRef,
       panorama: currentPanorama,
-      plugins: [VirtualTourPlugin, MarkersPlugin],
+      plugins: [
+        [
+          VirtualTourPlugin,
+          {
+            arrowStyle: {
+              scale: [1, 1],
+              margin: "10px",
+            },
+          },
+        ],
+        MarkersPlugin,
+      ],
       defaultZoomLvl: 0,
     });
     if (currentPanorama) {
@@ -93,4 +104,11 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+.psv-arrow-svg {
+  /* Custom styling for the arrows */
+  color: red; /* Change the color to red */
+  font-size: 24px; /* Increase the font size */
+  /* Add any other desired CSS properties */
+}
+</style>
