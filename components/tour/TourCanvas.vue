@@ -484,6 +484,7 @@ export default {
       panorama: this.hotspotNodes.find((h) => h.id == this.initialView?.id)
         ?.panorama,
       plugins: [VirtualTourPlugin, MarkersPlugin],
+      defaultZoomLvl: 0,
     });
 
     this.tourPlugin = this.viewer.getPlugin(VirtualTourPlugin);

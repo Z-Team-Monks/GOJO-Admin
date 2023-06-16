@@ -5,10 +5,27 @@
     <main class="s-layout__content">
       <div class="row m-5">
         <!-- <tabs class="nav-pills nav-fill m-3" :data="tabsData0"></tabs> -->
-        <div class="col-sm-4 mb-4" v-for="content in cardContent" :key="content.id">
+        <div
+          class="col-sm-4 mb-4"
+          v-for="content in cardContent"
+          :key="content.id"
+        >
           <card :content="content" :report="getRepo" />
         </div>
         <div class="row">
+          <div class="col-12 mt-5 mb-4">
+            <h5>Properties</h5>
+            <tabs
+              @tabUpdated="handleTabUpdate"
+              class="nav-pills nav-fill"
+              :data="tabsData"
+            ></tabs>
+            <div class="tab-content">
+              <div class="tab-pane fade show active" id="all">
+                <Table :properties="filteredProperties" :columns="columns" />
+              </div>
+            </div>
+          </div>
           <div class="col-sm-8"><h5>Categories</h5></div>
           <div class="col-sm-4">
             <b-button
@@ -121,19 +138,6 @@
             </div>
           </div>
         </transition-group>
-        <div class="col-12 mt-5 mb-4">
-          <h5>Properties</h5>
-          <tabs
-            @tabUpdated="handleTabUpdate"
-            class="nav-pills nav-fill"
-            :data="tabsData"
-          ></tabs>
-          <div class="tab-content">
-            <div class="tab-pane fade show active" id="all">
-              <Table :properties="filteredProperties" :columns="columns" />
-            </div>
-          </div>
-        </div>
       </div>
     </main>
   </div>
@@ -273,7 +277,6 @@ export default {
       }
       return properties;
     },
-      
   },
 
   methods: {

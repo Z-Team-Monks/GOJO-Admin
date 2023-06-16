@@ -78,6 +78,7 @@ export default {
       container: this.$refs.viewRef,
       panorama: currentPanorama,
       plugins: [VirtualTourPlugin, MarkersPlugin],
+      defaultZoomLvl: 0,
     });
     if (currentPanorama) {
       this.tourPlugin = this.viewer.getPlugin(VirtualTourPlugin);

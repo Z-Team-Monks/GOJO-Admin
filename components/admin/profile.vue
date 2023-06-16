@@ -274,7 +274,9 @@
                             }"
                             class="form-control-plaintext"
                             style="font-weight: 700"
-                            :value="currentUser.is_active"
+                            :value="
+                              currentUser.is_active ? 'Active' : 'Inactive'
+                            "
                           />
                         </div>
                         <div class="col-6 text-center">
@@ -290,7 +292,7 @@
                             }"
                             class="form-control-plaintext"
                             style="font-weight: 700"
-                            :value="currentUser.role"
+                            :value="getRoleLabel(currentUser.role)"
                           />
                         </div>
                       </div>
@@ -373,6 +375,11 @@ export default {
   },
   methods: {
     ...mapActions("auth", ["changePassword"]),
+    getRoleLabel(role) {
+      if (role == 3) return "Financial Manager";
+      if (role == 4) return "Listing Manager";
+      if (role == 5) return "General Manager";
+    },
     toggleDropdown() {
       this.dropdownOpen = !this.dropdownOpen;
     },
