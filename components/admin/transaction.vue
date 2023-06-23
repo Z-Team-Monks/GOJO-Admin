@@ -68,7 +68,7 @@ export default {
   data() {
     return {
       columns: [
-        "Property",
+        // "Property",
         "Payment Date",
         "Amount",
         "Payment Status",
